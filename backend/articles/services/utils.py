@@ -45,7 +45,7 @@ def get_published_version(article):
     """
     Return the published version of the article
     """
-    return PublishedArticle.objects.filter(article=article)
+    return PublishedArticle.objects.filter(article=article).first()
 
 
 def within_submit_cooldown(last_moderation_at, hours=24):
