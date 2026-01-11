@@ -60,16 +60,7 @@ const routes = [
         }
     },
     {
-        path: `/pending-articles`,
-        name: 'pending-articles',
-        component: () => import("@/views/articles/PendingArticleListView.vue"),
-        meta: {
-            requiresAuth: true,
-            title: 'Pending Articles',
-        }
-    },
-    {
-        path: `/studio/articles/:id/edit/`,
+        path: `/studio/article/:id/edit/`,
         name: 'article-editor',
         component: () => import("@/views/articles/SourceArticleEditorView.vue"),
         meta: {
@@ -79,17 +70,37 @@ const routes = [
         }
     },
     {
-        path: `/studio/articles/:id/review/`,
+        path: `/studio/article/:id/review/`,
         name: 'article-review',
         component: () => import("@/views/articles/SourceArticleReviewView.vue"),
         meta: {
             requiresAuth: true,
             title: 'Article Review',
+            showPageHeader: true,
         }
     },
     {
-        path: `/articles/`,
-        name: 'article-list',
+        path: `/staff/pending-articles`,
+        name: 'pending-articles',
+        component: () => import("@/views/articles/PendingArticleListView.vue"),
+        meta: {
+            requiresAuth: true,
+            title: 'Pending Articles',
+        }
+    },
+    {
+        path: `/staff/article/:id/moderate/`,
+        name: 'article-moderation',
+        component: () => import("@/views/articles/PendingArticleModerationView.vue"),
+        meta: {
+            requiresAuth: true,
+            title: 'Article Moderation',
+            showPageHeader: true,
+        }
+    },
+    {
+        path: `/published-articles/`,
+        name: 'published-article-list',
         component: () => import("@/views/articles/PublishedArticleListView.vue"),
         meta: {
             requiresAuth: true,

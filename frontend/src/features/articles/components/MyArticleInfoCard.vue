@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { computed } from 'vue';
 
 const router = useRouter();
 
@@ -10,6 +11,21 @@ const props = defineProps({
   }
 })
 
+const to = computed(() => {
+  const status = props.article.status
+
+  // Pending
+  if (status === 1) {
+    return { name: 'article-review', params: { id: props.article.id } }
+  }
+
+  // Published
+  if (status === 2) {
+    return { name: 'article-detail', params: { id: props.article.id } }
+  }
+
+  return { name: 'article-editor', params: { id: props.article.id } }
+})
 </script>
 
 <template>
@@ -18,7 +34,7 @@ const props = defineProps({
     <div class="flex flex-row items-center gap-2">
 
       <router-link
-          :to="{ name: 'article-editor', params: { id: article.id } }"
+          :to="to"
           class="text-lg font-semibold truncate hover:text-blue-500 hover:underline transition"
       >
         {{ article?.title }}

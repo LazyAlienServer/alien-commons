@@ -101,6 +101,7 @@ const content_editor = useEditor({
       Highlight,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
+        defaultAlignment: 'left',
       }),
       Mathematics.configure({
         blockOptions: {
@@ -185,17 +186,18 @@ async function handleSave() {
 }
 
 async function handleSubmit() {
-  console.log(props.isDirty)
   if (props.isDirty) {
     toast.error("Please save your changes before you submit!")
     return;
   }
 
+  const id = route.params.id;
+
   loading.value = true;
   try {
-    await submitArticle(id.value);
+    await submitArticle(id);
     toast.success("Article submitted successfully!");
-    await router.push({ name: 'my-articles' });
+    await router.push({ name: 'article-review', params: { id } });
 
   } catch (error) {
     toast.error(error.response?.data?.toast_error);
@@ -225,7 +227,7 @@ async function handleDelete() {
 </script>
 
 <template>
-  <Teleport to="#page-header-center">
+  <Teleport to="#page-header">
     <EditorToolBar
         v-if="content_editor"
         :editor="content_editor"
@@ -238,21 +240,19 @@ async function handleDelete() {
     />
   </Teleport>
 
-  <div class="col-body-container items-center">
 
-    <div class="flex flex-col px-3 py-5 mb-5 gap-y-5 w-3/4 shadow-md/25 border-t border-gray-100 flex-1 rounded-sm">
+  <div class="flex flex-col px-3 py-5 mb-5 gap-y-5 w-3/5 shadow-md/25 border-t border-gray-100 flex-1 rounded-sm">
 
-      <div class="editor-title rounded-lg p-3 bg-gray-200/60 text-light w-full">
-        <EditorContent v-if="title_editor" :editor="title_editor"/>
-      </div>
+    <div class="editor-title rounded-lg p-3 bg-gray-200/60 text-light w-full">
+      <EditorContent v-if="title_editor" :editor="title_editor"/>
+    </div>
 
-      <hr>
+    <hr>
 
-      <div class="editor-content p-3 text-light">
-        <EditorContent v-if="content_editor" :editor="content_editor"/>
-      </div>
-
+    <div class="editor-content p-3 text-light">
+      <EditorContent v-if="content_editor" :editor="content_editor"/>
     </div>
 
   </div>
+
 </template>

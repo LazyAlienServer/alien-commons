@@ -17,7 +17,7 @@ const userInfo = computed(() => userStore.userInfo);
         v-if="userInfo?.is_moderator"
         class="link text-[20px] font-semibold"
     >
-      Moderate Articles
+      You are our moderator. Moderate pending articles.
     </router-link>
 
   </div>

@@ -18,11 +18,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="col-body-container">
-    <ArticleReader
-        v-if="title && content"
-        :title="title"
-        :content="content"
-    />
-  </div>
+
 </template>

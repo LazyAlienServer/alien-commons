@@ -82,6 +82,9 @@ def submit(*, article_id, actor, annotation=None):
     if last_moderation_at and within_submit_cooldown(last_moderation_at, hours=6):
         raise CoolingDownError("Submission has a cooldown of 6 hours.")
 
+    if article.status == SourceArticle.ArticleStatus.PENDING:
+        raise StateTransitionError("You cannot submit a pending article!")
+
     current_hash = hash_and_normalize(
         article.title,
         article.content
@@ -117,6 +120,9 @@ def submit(*, article_id, actor, annotation=None):
 @transaction.atomic
 def withdraw(*, article_id, actor, annotation=None):
     article = select_article_for_update(article_id)
+
+    if article.status != SourceArticle.ArticleStatus.PENDING:
+        raise StateTransitionError("You can only withdraw a pending article!")
 
     # Delete Last Snapshot
     snapshot = get_last_snapshot(article)

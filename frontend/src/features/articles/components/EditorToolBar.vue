@@ -634,7 +634,7 @@ function addVideo() {
       <button
           type="button"
           class="editor-actions-btn group"
-          :disabled="loading"
+          :disabled="isSaving"
           @click="$emit('save')"
       >
         <Save size="21"/>

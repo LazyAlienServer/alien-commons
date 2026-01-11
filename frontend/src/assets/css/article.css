@@ -89,6 +89,9 @@
     .editor-toolbar-dropdown-btn.active {
         @apply bg-gray-100
     }
+    .ProseMirror {
+        @apply outline-0
+    }
     .ProseMirror blockquote {
         @apply border-l-4 border-gray-200 pl-4 my-4 text-gray-600;
     }

@@ -6,3 +6,4 @@ export { default as MyArticleList } from './MyArticleList.vue';
 export { default as PendingArticleList } from './PendingArticleList.vue';
 export { default as PendingArticleInfoCard } from './PendingArticleInfoCard.vue';
 export { default as ArticleReader } from './ArticleReader.vue';
+export { default as ReviewToolBar } from './ReviewToolBar.vue';

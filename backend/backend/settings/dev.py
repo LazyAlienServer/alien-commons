@@ -26,5 +26,3 @@ CACHES = {
         "KEY_PREFIX": "dev",
     }
 }
-
-SITE_URL = "http://localhost:8000"
