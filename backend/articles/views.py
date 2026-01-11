@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from django_filters import rest_framework as filters
 
 from core.utils.drf.pagination import StandardPagination
@@ -114,6 +115,24 @@ class ArticleActionViewset(GenericViewSet):
     queryset = SourceArticle.objects.all()
     lookup_field = "pk"
 
+    def _resolve_article_id(self, pk):
+        if not pk:
+            raise NotFound("Article not found.")
+
+        if SourceArticle.objects.filter(pk=pk).exists():
+            return pk
+
+        snapshot_article_id = (
+            ArticleSnapshot.objects
+            .filter(pk=pk)
+            .values_list("article_id", flat=True)
+            .first()
+        )
+        if snapshot_article_id:
+            return snapshot_article_id
+
+        raise NotFound("Article not found.")
+
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def submit(self, request, pk=None):
         input_serializer = ArticleActionInputSerializer(data=request.data)
@@ -149,8 +168,9 @@ class ArticleActionViewset(GenericViewSet):
         input_serializer = ArticleActionInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
+        article_id = self._resolve_article_id(pk)
         result = approve(
-            article_id=pk,
+            article_id=article_id,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -164,8 +184,9 @@ class ArticleActionViewset(GenericViewSet):
         input_serializer = ArticleActionInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
+        article_id = self._resolve_article_id(pk)
         result = reject(
-            article_id=pk,
+            article_id=article_id,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
