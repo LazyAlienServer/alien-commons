@@ -8,19 +8,21 @@ const route = useRoute();
 
 const title = ref('')
 const content = ref({ type: 'doc', content: [] })
+const articleId = ref(null)
 
 onMounted(async () => {
   const response = await getArticleSnapshot(route.params.id);
 
   title.value = response.data.title;
   content.value = response.data.content;
+  articleId.value = response.data.article;
 });
 
 const approve = async () => {
-  await approveArticle(route.params.id);
+  await approveArticle(articleId.value);
 }
 const reject = async () => {
-  await rejectArticle(route.params.id);
+  await rejectArticle(articleId.value);
 }
 </script>
 

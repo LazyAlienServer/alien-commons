@@ -16,6 +16,20 @@ class SourceArticlePermission(permissions.BasePermission):
         return is_the_author(request.user, obj)
 
 
+class ModeratorPermission(permissions.BasePermission):
+    """
+    Only moderators can perform this action.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        return user.is_authenticated and getattr(user, "is_moderator", False)
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        return user.is_authenticated and getattr(user, "is_moderator", False)
+
+
 class PublishedArticlePermission(permissions.BasePermission):
     """
     Everyone can view a published article.

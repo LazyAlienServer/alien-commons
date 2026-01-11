@@ -12,6 +12,7 @@ from .permissions import (
     PublishedArticlePermission,
     ArticleSnapshotPermission,
     ArticleEventPermission,
+    ModeratorPermission,
 )
 from .models import SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
 from .serializers import (
@@ -143,7 +144,7 @@ class ArticleActionViewset(GenericViewSet):
 
         return Response(output_serializer.data)
 
-    @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
+    @action(detail=True, methods=['post'], permission_classes=[ModeratorPermission,])
     def approve(self, request, pk=None):
         input_serializer = ArticleActionInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -158,7 +159,7 @@ class ArticleActionViewset(GenericViewSet):
 
         return Response(output_serializer.data)
 
-    @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
+    @action(detail=True, methods=['post'], permission_classes=[ModeratorPermission,])
     def reject(self, request, pk=None):
         input_serializer = ArticleActionInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
