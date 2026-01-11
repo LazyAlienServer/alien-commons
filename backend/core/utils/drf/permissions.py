@@ -1,5 +1,5 @@
 def is_moderator(user):
-    return user.is_moderator
+    return getattr(user, "is_moderator", False)
 
 
 def is_the_author(user, obj):
