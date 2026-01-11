@@ -19,6 +19,10 @@ function getTheSourceArticle(id) {
     return api.get(`/article/source_articles/${id}/`, { withCredentials: true });
 }
 
+function getArticleSnapshot(id) {
+    return api.get(`/article/article_snapshots/${id}/`, { withCredentials: true });
+}
+
 function createSourceArticle() {
     return api.post(`/article/source_articles/`)
 }
@@ -98,6 +102,7 @@ export {
     getMySourceArticles,
     getPendingArticles,
     getTheSourceArticle,
+    getArticleSnapshot,
     createSourceArticle,
     updateSourceArticle,
     submitArticle,
