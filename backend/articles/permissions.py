@@ -13,7 +13,7 @@ class SourceArticlePermission(permissions.BasePermission):
         return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        return is_the_author(request.user, obj)
+        return is_the_author(request.user, obj) or is_moderator(request.user)
 
 
 class PublishedArticlePermission(permissions.BasePermission):
