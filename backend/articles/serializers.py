@@ -131,6 +131,8 @@ class ArticleSnapshotSerializer(serializers.ModelSerializer):
     """
     Serializer for article snapshots. All fields are ready-only.
     """
+    moderation_status_display = serializers.SerializerMethodField()
+    article_id = serializers.SerializerMethodField()
 
     class Meta:
         model = ArticleSnapshot
@@ -142,8 +144,15 @@ class ArticleSnapshotSerializer(serializers.ModelSerializer):
             'content',
             'content_hash',
             'created_at',
-            'is_moderated',
+            'moderation_status',
+            'moderation_status_display',
         )
+
+    def get_moderation_status_display(self, obj):
+        return obj.get_moderation_status_display()
+
+    def get_article_id(self, obj):
+        return obj.article_id
 
 
 class ArticleEventSerializer(serializers.ModelSerializer):

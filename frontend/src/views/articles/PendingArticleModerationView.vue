@@ -1,22 +1,75 @@
 <script setup>
-import { ArticleReader } from '@/features/articles/components'
+import { ArticleReader, ModerationToolBar } from '@/features/articles/components'
 import { onMounted, ref } from "vue";
-import { getTheSourceArticle } from "@/features/articles/api";
+import { getThePendingArticle, approveArticle, rejectArticle } from "@/features/articles/api";
 import { useRoute } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const route = useRoute();
+const toast = useToast();
 
 const title = ref('')
 const content = ref({ type: 'doc', content: [] })
+const articleId = ref(null)
 
 onMounted(async () => {
-  const response = await getTheSourceArticle(route.params.id)
+  const response = await getThePendingArticle(route.params.id)
 
   title.value = response.data.title
   content.value = response.data.content
+  articleId.value = response.data.article_id
 })
+
+const loading = ref(false);
+
+async function handleApprove() {
+  loading.value = true;
+
+  try {
+    await approveArticle(articleId.value);
+    toast.success("Article approved successfully!");
+
+  } catch (error) {
+    toast.error(error.response?.data?.toast_error);
+    console.error("Failed to approve the article", error);
+
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleReject() {
+  loading.value = true;
+
+  try {
+    await rejectArticle(articleId.value);
+    toast.success("Article rejected successfully!");
+
+  } catch (error) {
+    toast.error(error.response?.data?.toast_error);
+    console.error("Failed to reject the article", error);
+
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
 
+  <Teleport to="#page-header">
+    <ModerationToolBar
+        :loading="loading"
+        @approve="handleApprove()"
+        @reject="handleReject()"
+    />
+  </Teleport>
+
+  <div class="col-body-container items-center">
+    <ArticleReader
+        v-if="title && content"
+        :title="title"
+        :content="content"
+    />
+  </div>
 </template>

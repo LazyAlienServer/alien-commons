@@ -1,10 +1,10 @@
 <script setup>
-import { ArticleListSideBar, PendingArticleList } from '@/features/articles/components'
+import { PendingArticleListSideBar, PendingArticleList } from '@/features/articles/components'
 </script>
 
 <template>
   <div class="row-body-container">
-    <ArticleListSideBar />
+    <PendingArticleListSideBar />
     <PendingArticleList />
   </div>
 </template>

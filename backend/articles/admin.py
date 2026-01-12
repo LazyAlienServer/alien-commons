@@ -79,7 +79,7 @@ class PublishedArticleAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Basic", {"fields": ("id", "title", "content")}),
-        ("Key Info", {"fields": ("article",)}),
+        ("Key Info", {"fields": ("article", )}),
         ("Timestamps", {"fields": ("created_at",)}),
     )
 
@@ -90,9 +90,11 @@ class ArticleSnapshotAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "created_at",
+        "moderation_status_display",
     )
     list_filter = (
         "created_at",
+        "moderation_status",
     )
 
     search_fields = ("title", "creator__username")
@@ -100,13 +102,17 @@ class ArticleSnapshotAdmin(admin.ModelAdmin):
     list_per_page = 25
     date_hierarchy = "created_at"
 
-    readonly_fields = ("id", "created_at", "article", "title", "content", "content_hash", "is_moderated")
+    readonly_fields = ("id", "created_at", "article", "title", "content", "content_hash", "moderation_status")
 
     fieldsets = (
         ("Basic", {"fields": ("id", "title", "content", "content_hash")}),
-        ("Key Info", {"fields": ("article", "is_moderated")}),
+        ("Key Info", {"fields": ("article", "moderation_status", "moderation_status_display")}),
         ("Timestamps", {"fields": ("created_at",)}),
     )
+
+    def moderation_status_display(self, obj):
+        return obj.get_moderation_status_display()
+    moderation_status_display.short_description = "Moderation Status"
 
 
 @admin.register(ArticleEvent)

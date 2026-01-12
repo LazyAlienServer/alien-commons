@@ -91,7 +91,7 @@ class ArticleSnapshotViewSet(ReadOnlyModelViewSet):
         """
         Return not moderated article snapshots
         """
-        queryset = ArticleSnapshot.objects.filter(is_moderated=False)
+        queryset = ArticleSnapshot.objects.filter(moderation_status=ArticleSnapshot.SnapshotStatus.PENDING)
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data)

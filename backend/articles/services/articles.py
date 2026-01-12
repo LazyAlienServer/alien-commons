@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 from articles.models import (
     SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
@@ -20,10 +21,9 @@ User = get_user_model()
 
 
 def select_article_for_update(article_id):
-    article = (
-        SourceArticle.objects
-        .select_for_update()
-        .get(pk=article_id)
+    article = get_object_or_404(
+        SourceArticle.objects.select_for_update(),
+        pk=article_id,
     )
 
     return article
@@ -103,6 +103,7 @@ def submit(*, article_id, actor, annotation=None):
         title=article.title,
         content=article.content,
         content_hash=current_hash,
+        moderation_status=ArticleSnapshot.SnapshotStatus.PENDING
     )
 
     # Create Article Event
@@ -124,7 +125,6 @@ def withdraw(*, article_id, actor, annotation=None):
     if article.status != SourceArticle.ArticleStatus.PENDING:
         raise StateTransitionError("You can only withdraw a pending article!")
 
-    # Delete Last Snapshot
     snapshot = get_last_snapshot(article)
 
     # Create Article Event
@@ -135,6 +135,10 @@ def withdraw(*, article_id, actor, annotation=None):
     # Update Source Article
     article.status = SourceArticle.ArticleStatus.DRAFT
     article.save(update_fields=['status'])
+
+    # Update Last Article Snapshot
+    snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.WITHDRAWN
+    snapshot.save(update_fields=['moderation_status'])
 
     return build_article_action_result(article=article, actor=actor, event=article_event, snapshot=snapshot)
 
@@ -163,9 +167,9 @@ def approve(*, article_id, actor, annotation=None):
     article.last_moderation_at = timezone.now()
     article.save(update_fields=['status', 'last_moderation_at'])
 
-    # Update Article Snapshot
-    snapshot.is_moderated = True
-    snapshot.save(update_fields=['is_moderated'])
+    # Update Last Article Snapshot
+    snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.APPROVED
+    snapshot.save(update_fields=['moderation_status'])
 
     return build_article_action_result(article=article, actor=actor, event=article_event, snapshot=snapshot)
 
@@ -192,9 +196,9 @@ def reject(*, article_id, actor, annotation=None):
     article.last_moderation_at = timezone.now()
     article.save(update_fields=['status', 'last_moderation_at'])
 
-    # Update Article Snapshot
-    snapshot.is_moderated = True
-    snapshot.save(update_fields=['is_moderated'])
+    # Update Last Article Snapshot
+    snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.REJECTED
+    snapshot.save(update_fields=['moderation_status'])
 
     return build_article_action_result(article=article, actor=actor, event=article_event, snapshot=snapshot)
 

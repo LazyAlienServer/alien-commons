@@ -121,6 +121,7 @@ onBeforeUnmount(() => {
       :class="showPageHeader ? 'border-0' : 'border-b border-neutral-300'"
   >
     <div class="flex flex-row items-center gap-6">
+
       <router-link :to="{ name: 'home' }">
         <WebsiteIcon class="w-8 h-auto"/>
       </router-link>
@@ -128,6 +129,11 @@ onBeforeUnmount(() => {
       <a href="https://lazyalienserver.top/" target="_blank" rel="noopener" class="w-9 h-auto">
         <LasLogo />
       </a>
+
+      <router-link :to="{ name: 'published-article-list' }" class="ml-5 hover:text-blue-400">
+        <span>Articles</span>
+      </router-link>
+
     </div>
 
     <div class="flex flex-row font-medium items-center gap-2">

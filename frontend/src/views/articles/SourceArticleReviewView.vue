@@ -1,7 +1,7 @@
 <script setup>
-import { ArticleReader } from '@/features/articles/components'
+import { ArticleReader, ReviewToolBar } from '@/features/articles/components'
 import { onMounted, ref } from "vue";
-import { getTheSourceArticle } from "@/features/articles/api";
+import { getTheSourceArticle, withdrawArticle } from "@/features/articles/api";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -15,10 +15,38 @@ onMounted(async () => {
   title.value = response.data.title
   content.value = response.data.content
 })
+
+const loading = ref(false);
+
+async function handleWithdraw() {
+  loading.value = true;
+  const id = route.params.id
+
+  try {
+    await withdrawArticle(id);
+    toast.success("Article withdrew successfully!");
+    await router.push({ name: 'article-editor', params: { id }});
+
+  } catch (error) {
+    toast.error(error.response?.data?.toast_error);
+    console.error("Failed to withdraw the article", error);
+
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
-  <div class="col-body-container">
+
+  <Teleport to="#page-header">
+    <ReviewToolBar
+        :loading="loading"
+        @withdraw="handleWithdraw()"
+    />
+  </Teleport>
+
+  <div class="col-body-container items-center">
     <ArticleReader
         v-if="title && content"
         :title="title"

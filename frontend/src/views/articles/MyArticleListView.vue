@@ -1,10 +1,10 @@
 <script setup>
-import { ArticleListSideBar, MyArticleList } from "@/features/articles/components";
+import { MyArticleListSideBar, MyArticleList } from "@/features/articles/components";
 </script>
 
 <template>
   <div class="row-body-container">
-    <ArticleListSideBar />
+    <MyArticleListSideBar />
     <MyArticleList />
   </div>
 </template>

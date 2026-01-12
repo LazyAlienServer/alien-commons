@@ -86,6 +86,13 @@ class ArticleSnapshot(UUIDPrimaryKeyMixin):
         - id
     """
 
+    class SnapshotStatus(models.IntegerChoices):
+
+        PENDING = 1, "Pending"
+        WITHDRAWN = 2, "Withdrawn"
+        APPROVED = 3, "Approved"
+        REJECTED = 4, "Rejected"
+
     article = models.ForeignKey(SourceArticle, on_delete=models.CASCADE, related_name="article_snapshots")
 
     title = models.CharField(max_length=60, db_index=True, default="")
@@ -93,12 +100,13 @@ class ArticleSnapshot(UUIDPrimaryKeyMixin):
     content_hash = models.CharField(max_length=64, blank=True, default="", db_index=True)
 
     created_at = models.DateTimeField(default=timezone.now, db_index=True, editable=False)
-    is_moderated = models.BooleanField(default=False)
+    moderation_status = models.IntegerField(choices=SnapshotStatus.choices, default=SnapshotStatus.PENDING, db_index=True)
 
     class Meta:
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['article', 'created_at']),
+            models.Index(fields=['moderation_status', 'created_at']),
             models.Index(fields=['article', 'content_hash']),
         ]
 

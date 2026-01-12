@@ -11,7 +11,8 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="flex flex-row justify-center gap-2 items-center">
+  <div class="flex flex-row justify-center gap-2 items-center w-1/7 flex-1">
+
     <button
         type="button"
         class="editor-actions-btn group"

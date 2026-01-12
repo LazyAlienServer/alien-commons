@@ -40,7 +40,7 @@ async function handleSaved() {
 </script>
 
 <template>
-  <div class="col-body-container">
+  <div class="col-body-container items-center">
     <ArticleEditor
         @update="handleEditorUpdate"
         @hydration-done="handleHydrationDone"

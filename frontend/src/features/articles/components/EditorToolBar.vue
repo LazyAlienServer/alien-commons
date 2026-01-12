@@ -246,10 +246,10 @@ function addVideo() {
 </script>
 
 <template>
-  <div class="flex flex-row justify-between">
+  <div class="flex flex-row justify-between flex-1">
 
     <!-- Left Section -->
-    <div class="flex flex-row justify-centeritems-center w-1/7">
+    <div class="flex flex-row justify-center items-center w-1/7">
 
       <div class="flex-1/2 flex flex-row items-center justify-center">
         <router-link

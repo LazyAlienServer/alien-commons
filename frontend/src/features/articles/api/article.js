@@ -11,10 +11,6 @@ function getMySourceArticles(query = undefined) {
     );
 }
 
-function getPendingArticles() {
-    return api.get('/article/article_snapshots/pending/', { withCredentials: true });
-}
-
 function getTheSourceArticle(id) {
     return api.get(`/article/source_articles/${id}/`, { withCredentials: true });
 }
@@ -94,9 +90,24 @@ function uploadArticleImage(formData) {
     )
 }
 
+function getPendingArticles() {
+    return api.get('/article/article_snapshots/pending/', { withCredentials: true });
+}
+
+function getThePendingArticle(id) {
+    return api.get(`/article/article_snapshots/${id}/`, { withCredentials: true });
+}
+
+function getPublishedArticles() {
+    return api.get('/article/published_articles/');
+}
+
+function getThePublishedArticle(id) {
+    return api.get(`/article/published_articles/${id}/`);
+}
+
 export {
     getMySourceArticles,
-    getPendingArticles,
     getTheSourceArticle,
     createSourceArticle,
     updateSourceArticle,
@@ -106,5 +117,9 @@ export {
     rejectArticle,
     unpublishArticle,
     deleteArticle,
-    uploadArticleImage
+    uploadArticleImage,
+    getPendingArticles,
+    getThePendingArticle,
+    getPublishedArticles,
+    getThePublishedArticle,
 }

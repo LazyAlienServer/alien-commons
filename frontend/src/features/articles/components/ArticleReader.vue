@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from 'vue'
+import { computed } from 'vue'
 import { generateHTML } from '@tiptap/core'
 import StarterKit from "@tiptap/starter-kit";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
@@ -10,10 +10,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import Mathematics from "@tiptap/extension-mathematics";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
-import { ReviewToolBar } from '@/features/articles/components'
-import { withdrawArticle } from '@/features/articles/api'
-import { useToast } from "vue-toastification";
-import { useRouter, useRoute } from "vue-router";
 
 const props = defineProps({
   title: {
@@ -75,44 +71,16 @@ const html = computed(() => {
     return "<p class='text-red-600'>Failed to render content.</p>"
   }
 })
-
-const loading = ref(false);
-const toast = useToast();
-const router = useRouter();
-const route = useRoute();
-
-async function handleWithdraw() {
-  loading.value = true;
-  const id = route.params.id
-
-  try {
-    await withdrawArticle(id);
-    toast.success("Article withdrew successfully!");
-    await router.push({ name: 'article-editor', params: { id }});
-
-  } catch (error) {
-    toast.error(error.response?.data?.toast_error);
-    console.error("Failed to withdraw the article", error);
-
-  } finally {
-    loading.value = false;
-  }
-}
 </script>
 
 <template>
-  <Teleport to="#page-header">
-    <ReviewToolBar
-        :loading="loading"
-        @withdraw="handleWithdraw()"
-    />
-  </Teleport>
 
-  <article class="flex flex-col flex-1 w-3/5">
+  <article class="flex flex-col flex-1 w-3/5 min-h-screen">
     <!-- title -->
-    <h1 class="text-[45px] font-semibold mb-6">{{ title || "Untitled"}}</h1>
+    <h1 class="text-[40px] font-semibold mb-6">{{ title || "Untitled"}}</h1>
 
     <!-- content -->
-    <div class="ProseMirror" v-html="html"></div>
+    <div class="ProseMirror" v-html="html" />
   </article>
+  
 </template>
