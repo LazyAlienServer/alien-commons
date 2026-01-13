@@ -1,77 +1,45 @@
 services:
   db:
     image: postgres:17
-    container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    ports:
-      - "5432:5432"
-    restart: always
+    restart: unless-stopped
 
   redis:
     image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-    restart: always
+    restart: unless-stopped
     
   web:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: django
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/code
     depends_on:
       - db
       - redis
-    restart: always
+    restart: unless-stopped
   
   celery_worker:
     build: ./backend
-    container_name: celery_worker
     command: celery -A backend worker --loglevel=info --events
-    volumes:
-      - ./backend:/code
     depends_on:
       - db
       - redis
       - web
-    restart: always
+    restart: unless-stopped
   
   celery_beat:
     build: ./backend
-    container_name: celery_beat
     command: celery -A backend beat --loglevel=info
-    volumes:
-      - ./backend:/code
     depends_on:
       - redis
       - db
       - celery_worker
-    restart: always
-  
-  flower:
-    image: mher/flower:2.0.1
-    container_name: flower
-    command: celery --broker=redis://redis:6379/0 flower
-    ports:
-      - "5555:5555"
-    depends_on:
-      - db
-      - redis
-      - celery_worker
-    restart: always
+    restart: unless-stopped
   
   frontend:
-    container_name: vue
     depends_on:
       - web
-    restart: always
+    restart: unless-stopped
 
 volumes:
   postgres_data:

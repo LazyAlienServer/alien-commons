@@ -130,8 +130,8 @@ onBeforeUnmount(() => {
         <LasLogo />
       </a>
 
-      <router-link :to="{ name: 'published-article-list' }" class="ml-5 hover:text-blue-400">
-        <span>Articles</span>
+      <router-link :to="{ name: 'published-article-list' }" class="ml-5">
+        <span class="hover:text-blue-400 font-semibold">Articles</span>
       </router-link>
 
     </div>

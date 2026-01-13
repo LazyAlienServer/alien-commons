@@ -1,5 +1,7 @@
 from .base import *
 
+SECRET_KEY = env.str("SECRET_KEY")
+
 ALLOWED_HOSTS = ['*']  # TODO: 生产环境得改
 
 DEBUG = False
@@ -26,3 +28,8 @@ CACHES = {
         "KEY_PREFIX": "pro",
     }
 }
+
+SITE_URL = env.str("SITE_URL")
+
+YOUTUBE_API_KEY = env.str("YOUTUBE_API_KEY")
+YOUTUBE_API_URL = f"https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id={YOUTUBE_CHANNEL_ID}&key={YOUTUBE_API_KEY}"

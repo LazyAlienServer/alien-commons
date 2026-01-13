@@ -1,15 +1,12 @@
 from datetime import timedelta
 from pathlib import Path
 
-from django.template.context_processors import static
 from environs import Env
 
 env = Env()
 env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-SECRET_KEY = env.str("SECRET_KEY")
 
 
 ALLOWED_HOSTS = []
@@ -50,10 +47,8 @@ DEFAULT_AVATARS = [
     'default_avatar/Sword.webp',
 ]
 
-YOUTUBE_API_KEY = env.str("YOUTUBE_API_KEY")
 YOUTUBE_CHANNEL_ID = env.str("YOUTUBE_CHANNEL_ID")
 YOUTUBE_CHANNEL_HANDLE = env.str("YOUTUBE_CHANNEL_HANDLE")
-YOUTUBE_API_URL = f"https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id={YOUTUBE_CHANNEL_ID}&key={YOUTUBE_API_KEY}"
 YOUTUBE_REQUEST_HEADERS = {
     "Referer": "http://localhost:8000",
 }
