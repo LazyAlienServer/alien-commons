@@ -2,6 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from environs import Env
+from corsheaders.defaults import default_headers
 
 env = Env()
 env.read_env()
@@ -9,7 +10,9 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-ALLOWED_HOSTS = []
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+]
 
 
 INSTALLED_APPS = [
@@ -31,6 +34,7 @@ INSTALLED_APPS = [
     "articles.apps.ArticlesConfig",
     "comments.apps.CommentsConfig",
     # 3rd-party Apps
+    "corsheaders",
     "rest_framework",
     "django_celery_beat",
     "django_filters",
@@ -79,6 +83,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

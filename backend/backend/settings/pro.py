@@ -2,7 +2,11 @@ from .base import *
 
 SECRET_KEY = env.str("SECRET_KEY")
 
-ALLOWED_HOSTS = ['*']  # TODO: 生产环境得改
+ALLOWED_HOSTS = [env.list("ALLOWED_HOSTS")]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://community.lazyalienserver.top",
+]
 
 DEBUG = False
 
