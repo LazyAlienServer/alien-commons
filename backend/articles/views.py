@@ -3,6 +3,7 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelV
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
+from django.db.models import OuterRef, Subquery
 
 from core.utils.drf.pagination import StandardPagination
 from core.utils.drf.permissions import is_moderator
@@ -48,7 +49,15 @@ class SourceArticleViewSet(ModelViewSet):
 
         if not user or user.is_anonymous:
             return queryset.none()
-        return queryset.filter(author=user)
+
+        queryset = queryset.filter(author=user)
+        last_snapshot_id = ArticleSnapshot.objects.filter(article_id=OuterRef("pk")).order_by("-created_at").values("id")[:1]
+        published_version_id = PublishedArticle.objects.filter(article_id=OuterRef("pk")).values("id")
+
+        return queryset.annotate(
+            last_snapshot_id=Subquery(last_snapshot_id),
+            published_version_id=Subquery(published_version_id),
+        )
 
     def create(self, request, *args, **kwargs):
         input_serializer = SourceArticleWriteSerializer(
@@ -59,10 +68,13 @@ class SourceArticleViewSet(ModelViewSet):
 
         instance = input_serializer.save(author=self.request.user)
 
+        instance = self.get_queryset().get(pk=instance.pk)
+
         output_serializer = SourceArticleReadSerializer(
             instance=instance,
             context=self.get_serializer_context(),
         )
+
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], url_path='upload_article_image')

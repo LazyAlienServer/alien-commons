@@ -27,7 +27,7 @@ export default defineConfig({
 
         proxy: {
             '/api/v1': {
-                target: 'http://web:8000',
+                target: 'http://backend:8000',
                 changeOrigin: true,
                 rewrite: path => path.replace(/^\/api\/v1/, '/api/v1'),
             },

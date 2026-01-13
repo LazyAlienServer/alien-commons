@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
 
-  web:
+  backend:
     command: >
       sh -c "
         python manage.py collectstatic --noinput &&

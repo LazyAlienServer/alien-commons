@@ -13,6 +13,7 @@ const props = defineProps({
 
 const to = computed(() => {
   const status = props.article.status
+  console.log(props.article)
 
   // Pending
   if (status === 1) {
@@ -21,7 +22,7 @@ const to = computed(() => {
 
   // Published
   if (status === 2) {
-    return { name: 'article-detail', params: { id: props.article.id } }
+    return { name: 'article-detail', params: { id: props.article.published_version_id } }
   }
 
   return { name: 'article-editor', params: { id: props.article.id } }

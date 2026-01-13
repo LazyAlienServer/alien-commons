@@ -2,10 +2,11 @@
 import { ArticleReader, ModerationToolBar } from '@/features/articles/components'
 import { onMounted, ref } from "vue";
 import { getThePendingArticle, approveArticle, rejectArticle } from "@/features/articles/api";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
 const route = useRoute();
+const router = useRouter();
 const toast = useToast();
 
 const title = ref('')
@@ -28,6 +29,7 @@ async function handleApprove() {
   try {
     await approveArticle(articleId.value);
     toast.success("Article approved successfully!");
+    await router.push({ name: 'pending-articles' });
 
   } catch (error) {
     toast.error(error.response?.data?.toast_error);
@@ -44,6 +46,7 @@ async function handleReject() {
   try {
     await rejectArticle(articleId.value);
     toast.success("Article rejected successfully!");
+    await router.push({ name: 'pending-articles' });
 
   } catch (error) {
     toast.error(error.response?.data?.toast_error);

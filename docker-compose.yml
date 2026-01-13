@@ -9,7 +9,7 @@ services:
     image: redis:7
     restart: unless-stopped
     
-  web:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
       - redis
-      - web
+      - backend
     restart: unless-stopped
   
   celery_beat:
@@ -38,7 +38,7 @@ services:
   
   frontend:
     depends_on:
-      - web
+      - backend
     restart: unless-stopped
 
 volumes:

@@ -33,7 +33,7 @@ async function handleLogin() {
 </script>
 
 <template>
-  <form @submit.prevent="handleLogin" class="backgrounds-auto">
+  <form @submit.prevent="handleLogin" class="backgrounds-auto gap-4">
     <h2 class="text-2xl font-bold text-center">Sign In</h2>
 
     <div>

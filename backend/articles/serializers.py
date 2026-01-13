@@ -27,6 +27,8 @@ class SourceArticleReadSerializer(serializers.ModelSerializer):
 
     author_username = serializers.CharField(source='author.username')
     status_display = serializers.SerializerMethodField()
+    last_snapshot_id = serializers.UUIDField()
+    published_version_id = serializers.UUIDField()
 
     class Meta:
         model = SourceArticle
@@ -42,7 +44,9 @@ class SourceArticleReadSerializer(serializers.ModelSerializer):
             'updated_at',
             'is_deleted',
             'author_username',
-            'status_display'
+            'status_display',
+            'last_snapshot_id',
+            'published_version_id',
         ]
 
     def get_status_display(self, obj):

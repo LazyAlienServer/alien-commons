@@ -241,7 +241,7 @@ async function handleDelete() {
   </Teleport>
 
 
-  <div class="flex flex-col px-3 py-5 mb-5 gap-y-5 w-3/5 shadow-md/25 border-t border-gray-100 flex-1 rounded-sm">
+  <div class="flex flex-col px-3 py-5 mb-3 gap-y-5 w-3/5 shadow-md/25 border-t border-gray-100 flex-1 rounded-sm">
 
     <div class="editor-title rounded-lg p-3 bg-gray-200/60 text-light w-full">
       <EditorContent v-if="title_editor" :editor="title_editor"/>

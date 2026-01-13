@@ -1,5 +1,5 @@
 services:
-  web:
+  backend:
     command: >
       sh -c "
         python manage.py migrate &&

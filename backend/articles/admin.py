@@ -102,7 +102,10 @@ class ArticleSnapshotAdmin(admin.ModelAdmin):
     list_per_page = 25
     date_hierarchy = "created_at"
 
-    readonly_fields = ("id", "created_at", "article", "title", "content", "content_hash", "moderation_status")
+    readonly_fields = (
+        "id", "created_at", "article", "title", "content", "content_hash",
+        "moderation_status", "moderation_status_display",
+    )
 
     fieldsets = (
         ("Basic", {"fields": ("id", "title", "content", "content_hash")}),
@@ -112,7 +115,6 @@ class ArticleSnapshotAdmin(admin.ModelAdmin):
 
     def moderation_status_display(self, obj):
         return obj.get_moderation_status_display()
-    moderation_status_display.short_description = "Moderation Status"
 
 
 @admin.register(ArticleEvent)
