@@ -4,7 +4,7 @@ Quick Start (Backend)
 
 ```
 cp env/backend.env.example env/backend.env.dev
-# then edit env/backend.dev.env and fill in real values
+# then edit env/backend.env.dev and fill in real values
 ```
 
 2) Start services (dev)
@@ -28,6 +28,9 @@ python manage.py migrate
 Production
 
 ```
-# create env/backend.prod.env (do NOT commit)
+cp env/backend.env.example env/backend.env.pro
+# then edit env/backend.env.pro and fill in real values
+
+# run production server
 make pro
 ```
