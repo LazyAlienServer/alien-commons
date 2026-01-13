@@ -13,19 +13,9 @@ cp env/backend.env.example env/backend.env.dev
 make dev
 ```
 
-3) Run migrations
-
-```
-# run this to open backend terminal first
-make webbash
-
-python manage.py makemigrations
-python manage.py migrate
-```
-
 ⸻
 
-Production
+Production Phase
 
 ```
 cp env/backend.env.example env/backend.env.pro
