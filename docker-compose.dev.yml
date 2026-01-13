@@ -1,9 +1,13 @@
 services:
   db:
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - "5432:5432"
+    env_file:
+    - ./env/backend.env.dev
   
   redis:
     ports:
@@ -12,6 +16,7 @@ services:
   backend:
     command: >
       sh -c "
+        python manage.py migrate &&
         python manage.py collectstatic --noinput &&
         python manage.py init_tasks &&
         daphne -b 0.0.0.0 -p 8000 backend.asgi:application
@@ -44,4 +49,7 @@ services:
     command: sh -c "npm install && npm run dev"
     ports:
       - "8080:5173"
-      
+  
+volumes:
+  postgres_data_dev:
+  

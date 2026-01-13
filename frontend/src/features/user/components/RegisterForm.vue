@@ -33,7 +33,7 @@ async function handleRegister() {
 </script>
 
 <template>
-  <form @submit.prevent="handleRegister" class="backgrounds-auto">
+  <form @submit.prevent="handleRegister" class="backgrounds-auto gap-4">
     <h2 class="text-2xl font-bold text-center">Sign Up</h2>
 
     <div>
@@ -89,7 +89,7 @@ async function handleRegister() {
       <p class="text-[12px]">- can’t be too similar to your other personal information.</p>
     </div>
 
-    <button type="submit" :disabled="loading">
+    <button type="submit" :disabled="loading" class="form-btn">
       Sign up
     </button>
 

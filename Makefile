@@ -6,5 +6,11 @@ devdown:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 prodown:
 	docker-compose -f docker-compose.yml -f docker-compose.pro.yml down
-webbash:
+devdownv:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+prodownv:
+	docker-compose -f docker-compose.yml -f docker-compose.pro.yml down -v
+devwebbash:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec backend bash
+prowebbash:
+	docker-compose -f docker-compose.yml -f docker-compose.pro.yml exec backend bash

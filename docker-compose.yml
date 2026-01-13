@@ -1,8 +1,6 @@
 services:
   db:
     image: postgres:17
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   redis:
@@ -40,7 +38,3 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
-
-volumes:
-  postgres_data:
-  

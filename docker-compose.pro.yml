@@ -1,4 +1,10 @@
 services:
+  db:
+    volumes:
+      - postgres_data_pro:/var/lib/postgresql/data
+    env_file:
+    - ./env/backend.env.pro
+
   backend:
     command: >
       sh -c "
@@ -52,3 +58,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
     restart: unless-stopped
+
+volumes:
+  postgres_data_pro:
+  letsencrypt:
+  

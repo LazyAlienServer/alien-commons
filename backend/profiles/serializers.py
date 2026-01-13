@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
 
@@ -132,9 +134,15 @@ class CustomLoginSerializer(TokenObtainPairSerializer):
 
 class CustomLoginRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
-        data = super().validate(attrs)
+        try:
+            data = super().validate(attrs)
+        except ObjectDoesNotExist:
+            raise AuthenticationFailed(
+                self.error_messages.get("no_active_account", "No active account"),
+                code="no_active_account",
+            )
 
         access_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
-        data['access_token_lifetime'] = str(access_lifetime.total_seconds())
+        data["access_token_lifetime"] = str(access_lifetime.total_seconds())
 
         return data
