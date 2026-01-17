@@ -1,7 +1,7 @@
 dev:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 pro:
-	docker-compose -f docker-compose.yml -f docker-compose.pro.yml up --build
+	docker-compose -f docker-compose.yml -f docker-compose.pro.yml up -d --build
 devdown:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 prodown:

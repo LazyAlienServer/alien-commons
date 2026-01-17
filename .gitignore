@@ -32,6 +32,7 @@ pnpm-debug.log*
 # Environment files
 env/backend.env.dev
 env/backend.env.pro
+env/backend.env.staging
 frontend/.env
 frontend/.env.*
 !frontend/.env.example
