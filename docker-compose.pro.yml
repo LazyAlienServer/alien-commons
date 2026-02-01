@@ -17,7 +17,7 @@ services:
       - ./env/backend.env.pro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.community.lazyalienserver.top`)"
+      - "traefik.http.routers.api.rule=Host(`api.aliencommons.lazyalienserver.top`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=le"
       - "traefik.http.services.api.loadbalancer.server.port=8000"
@@ -36,7 +36,7 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`community.lazyalienserver.top`)"
+      - "traefik.http.routers.frontend.rule=Host(`aliencommons.lazyalienserver.top`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=le"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
