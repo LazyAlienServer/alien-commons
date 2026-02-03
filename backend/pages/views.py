@@ -19,7 +19,15 @@ def fetch_youtube_cache():
     """Fetch cached YouTube data"""
 
     raw_data = get_cache("youtube_data", "channel_stats")
-    data = raw_data["items"][0]
+
+    if not raw_data:
+        return None
+
+    items = raw_data.get("items") or []
+    if not items:
+        return None
+    
+    data = items[0]
 
     return data
 
