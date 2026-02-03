@@ -95,7 +95,7 @@ api.interceptors.response.use(
 
 // for requests outside the user system
 const apiBare = axios.create({
-    baseURL: '/api/v1',
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/v1`,
     timeout: 10000,
 })
 
