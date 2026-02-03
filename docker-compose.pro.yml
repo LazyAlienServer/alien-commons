@@ -34,6 +34,7 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      VITE_MODE: production
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.frontend.rule=Host(`aliencommons.lazyalienserver.top`)"

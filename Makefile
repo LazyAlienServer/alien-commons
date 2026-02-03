@@ -20,3 +20,11 @@ devwebbash:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec backend bash
 prowebbash:
 	docker-compose -f docker-compose.yml -f docker-compose.pro.yml exec backend bash
+probackendlog:
+	docker compose -f docker-compose.yml -f docker-compose.pro.yml logs backend
+profrontendlog:
+	docker compose -f docker-compose.yml -f docker-compose.pro.yml logs frontend
+stagingbackendlog:
+	docker compose -f docker-compose.yml -f docker-compose.staging.yml logs backend
+stagingfrontendlog:
+	docker compose -f docker-compose.yml -f docker-compose.staging.yml logs frontend

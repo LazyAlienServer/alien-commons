@@ -36,6 +36,8 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_MODE: staging
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.frontend.rule=Host(`staging.aliencommons.lazyalienserver.top`)"
