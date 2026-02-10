@@ -1,3 +1,4 @@
+services:
   traefik:
     image: traefik:v3.0
     command:
@@ -16,5 +17,5 @@
       - letsencrypt:/letsencrypt
     restart: unless-stopped
 
-  volumes:
-    letsencrypt:
+volumes:
+  letsencrypt:
