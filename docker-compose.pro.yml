@@ -23,10 +23,10 @@ services:
       - ./env/backend.env.pro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.aliencommons.lazyalienserver.top`)"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.routers.api.tls.certresolver=le"
-      - "traefik.http.services.api.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend-production.rule=Host(`api.aliencommons.lazyalienserver.top`)"
+      - "traefik.http.routers.backend-production.entrypoints=websecure"
+      - "traefik.http.routers.backend-production.tls.certresolver=le"
+      - "traefik.http.services.backend-production.loadbalancer.server.port=8000"
 
   celery_worker:
     env_file:
@@ -43,10 +43,10 @@ services:
       VITE_MODE: production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`aliencommons.lazyalienserver.top`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=le"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend-production.rule=Host(`aliencommons.lazyalienserver.top`)"
+      - "traefik.http.routers.frontend-production.entrypoints=websecure"
+      - "traefik.http.routers.frontend-production.tls.certresolver=le"
+      - "traefik.http.services.frontend-production.loadbalancer.server.port=80"
 
 volumes:
   postgres_data_pro:

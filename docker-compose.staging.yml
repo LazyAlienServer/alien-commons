@@ -23,10 +23,10 @@ services:
       - ./env/backend.env.staging
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.staging.aliencommons.lazyalienserver.top`)"
-      - "traefik.http.routers.api.entrypoints=websecure"
-      - "traefik.http.routers.api.tls.certresolver=le"
-      - "traefik.http.services.api.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend-staging.rule=Host(`api.staging.aliencommons.lazyalienserver.top`)"
+      - "traefik.http.routers.backend-staging.entrypoints=websecure"
+      - "traefik.http.routers.backend-staging.tls.certresolver=le"
+      - "traefik.http.services.backend-staging.loadbalancer.server.port=8000"
     ports:
       - "127.0.0.1:8000:8000"
 
@@ -46,10 +46,10 @@ services:
         VITE_MODE: staging
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`staging.aliencommons.lazyalienserver.top`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=le"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend-staging.rule=Host(`staging.aliencommons.lazyalienserver.top`)"
+      - "traefik.http.routers.frontend-staging.entrypoints=websecure"
+      - "traefik.http.routers.frontend-staging.tls.certresolver=le"
+      - "traefik.http.services.frontend-staging.loadbalancer.server.port=80"
     ports:
     - "127.0.0.1:3000:80"
 
