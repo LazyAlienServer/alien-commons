@@ -4,7 +4,6 @@ import * as path from "node:path";
 import removeConsole from "vite-plugin-remove-console";
 import svgLoader from "vite-svg-loader";
 
-
 export default defineConfig({
     plugins: [
         vue(),
@@ -13,18 +12,15 @@ export default defineConfig({
         }),
         svgLoader(),
     ],
-
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'src'),
         }
     },
-
     server: {
         host: '0.0.0.0',
         port: 5173,
         open: true,
-
         proxy: {
             '/api/v1': {
                 target: 'http://backend:8000',
@@ -33,7 +29,6 @@ export default defineConfig({
             },
         }
     },
-
     build: {
         sourcemap: false,
         target: 'esnext',
