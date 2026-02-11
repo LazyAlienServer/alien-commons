@@ -29,6 +29,7 @@ services:
       - "traefik.http.services.backend-production.loadbalancer.server.port=8000"
     volumes:
       - /srv/alien-commons/pro/media:/code/media
+      - /srv/alien-commons/pro/static:/code/staticfiles
 
   celery_worker:
     env_file:
@@ -60,6 +61,17 @@ services:
       - "traefik.http.routers.media.entrypoints=websecure"
       - "traefik.http.routers.media.tls.certresolver=le"
       - "traefik.http.services.media.loadbalancer.server.port=80"
+  
+  static:
+    image: nginx:alpine
+    volumes:
+      - /srv/alien-commons/pro/static:/usr/share/nginx/html/static:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.static.rule=Host(`api.staging.aliencommons.lazyalienserver.top`) && PathPrefix(`/static`)"
+      - "traefik.http.routers.static.entrypoints=websecure"
+      - "traefik.http.routers.static.tls.certresolver=le"
+      - "traefik.http.services.static.loadbalancer.server.port=80"
 
 volumes:
   postgres_data_pro:
