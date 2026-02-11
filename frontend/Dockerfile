@@ -1,6 +1,6 @@
 FROM node:23 AS build-stage
 
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=512"
 
 WORKDIR /app
 
