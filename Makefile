@@ -32,3 +32,5 @@ stagingbackendlog:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml logs backend
 stagingfrontendlog:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml logs frontend
+traefiklog:
+	docker compose -f docker-compose.traefik.yml logs traefik
