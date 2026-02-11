@@ -9,6 +9,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--accesslog=true"
+      - "--log.level=DEBUG"
       - "--certificatesresolvers.le.acme.tlschallenge=true"
       - "--certificatesresolvers.le.acme.email=lastranslationteam@gmail.com"
       - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
