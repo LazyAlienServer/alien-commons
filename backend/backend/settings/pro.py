@@ -13,3 +13,7 @@ CACHES = {
         "KEY_PREFIX": "pro",
     }
 }
+
+REDIS_PASSWORD = env("REDIS_PASSWORD", default="")
+CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@redis:6379/0"
+CELERY_RESULT_BACKEND = f"redis://:{REDIS_PASSWORD}@redis:6379/1"
