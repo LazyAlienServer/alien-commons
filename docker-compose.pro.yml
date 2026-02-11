@@ -50,6 +50,17 @@ services:
       - "traefik.http.routers.frontend-production.tls.certresolver=le"
       - "traefik.http.services.frontend-production.loadbalancer.server.port=80"
 
+  media:
+    image: nginx:alpine
+    volumes:
+      - /srv/alien-commons/pro/media:/usr/share/nginx/html/media:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.media.rule=Host(`api.staging.aliencommons.lazyalienserver.top`) && PathPrefix(`/media`)"
+      - "traefik.http.routers.media.entrypoints=websecure"
+      - "traefik.http.routers.media.tls.certresolver=le"
+      - "traefik.http.services.media.loadbalancer.server.port=80"
+
 volumes:
   postgres_data_pro:
   
