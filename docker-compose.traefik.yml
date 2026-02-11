@@ -2,9 +2,10 @@ services:
   traefik:
     image: traefik:v3.2
     environment:
-      - DOCKER_API_VERSION=1.53
+      - DOCKER_API_VERSION=1.44
     command:
       - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
