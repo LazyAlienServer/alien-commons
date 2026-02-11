@@ -27,6 +27,8 @@ services:
       - "traefik.http.routers.backend-production.entrypoints=websecure"
       - "traefik.http.routers.backend-production.tls.certresolver=le"
       - "traefik.http.services.backend-production.loadbalancer.server.port=8000"
+    volumes:
+      - /srv/alien-commons/pro/media:/code/media
 
   celery_worker:
     env_file:
