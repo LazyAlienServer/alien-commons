@@ -5,6 +5,7 @@ import router from "@/router";
 import "@/assets/css/app.css";
 import "@/assets/css/article.css";
 import "@/assets/css/modal.css";
+import "@/assets/css/katex.css"
 import { setupGlobalErrorHandler } from "@/utils";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
