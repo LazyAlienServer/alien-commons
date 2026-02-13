@@ -52,10 +52,26 @@ services:
       - "traefik.http.services.frontend-production.loadbalancer.server.port=80"
 
   media:
+    image: nginx:alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.media.rule=Host(`api.staging.aliencommons.lazyalienserver.top`) && PathPrefix(`/media`)"
+      - "traefik.http.routers.media.entrypoints=websecure"
+      - "traefik.http.routers.media.tls.certresolver=le"
+      - "traefik.http.services.media.loadbalancer.server.port=80"
+    restart: unless-stopped
     volumes:
       - /srv/alien-commons/pro/media:/usr/share/nginx/html/media:ro
   
   static:
+    image: nginx:alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.static.rule=Host(`api.staging.aliencommons.lazyalienserver.top`) && PathPrefix(`/static`)"
+      - "traefik.http.routers.static.entrypoints=websecure"
+      - "traefik.http.routers.static.tls.certresolver=le"
+      - "traefik.http.services.static.loadbalancer.server.port=80"
+    restart: unless-stopped
     volumes:
       - /srv/alien-commons/pro/static:/usr/share/nginx/html/static:ro
 

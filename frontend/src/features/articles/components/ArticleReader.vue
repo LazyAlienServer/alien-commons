@@ -7,7 +7,7 @@ import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
-import Mathematics from "@tiptap/extension-mathematics";
+import { Mathematics } from "@tiptap/extension-mathematics";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
 
