@@ -72,9 +72,9 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 
-    "EXCEPTION_HANDLER": "core.utils.exceptions.custom_exception_handler",
+    "EXCEPTION_HANDLER": "core.exceptions.custom_exception_handler",
 
-    "DEFAULT_PAGINATION_CLASS": "core.utils.drf.pagination.StandardPagination",
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
     "PAGE_SIZE": 20,
 
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",

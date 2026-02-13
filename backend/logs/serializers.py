@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import FELog
-from core.utils.drf.fields import FlexibleDateTimeField
+from core.fields import FlexibleDateTimeField
 
 
 class SingleFELogSerializer(serializers.ModelSerializer):

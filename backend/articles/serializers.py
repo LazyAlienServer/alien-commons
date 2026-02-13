@@ -6,10 +6,10 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from core.utils.drf.validators import (
+from core.validators import (
     RequiredValidator, LengthValidator, FileTypeValidator, FileSizeValidator
 )
-from core.utils.drf.permissions import is_moderator
+from core.permissions import is_moderator
 from .models import SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
 
 import uuid

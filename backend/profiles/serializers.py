@@ -14,7 +14,7 @@ import random
 import io
 from PIL import Image
 
-from core.utils.drf.validators import (
+from core.validators import (
     FileSizeValidator,
     FileTypeValidator,
     PasswordValidator,

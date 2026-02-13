@@ -9,7 +9,6 @@ from articles.services.exceptions import (
     NoSnapshotError,
 )
 
-
 EXCEPTION_STATUS_REGISTRY = {}
 
 

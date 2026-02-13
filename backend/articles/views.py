@@ -5,8 +5,7 @@ from rest_framework.decorators import action
 from django_filters import rest_framework as filters
 from django.db.models import OuterRef, Subquery
 
-from core.utils.drf.pagination import StandardPagination
-from core.utils.drf.permissions import is_moderator
+from core.permissions import is_moderator
 from .filters import SourceArticleFilter
 from .permissions import (
     SourceArticlePermission,
