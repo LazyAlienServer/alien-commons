@@ -54,7 +54,7 @@ class FileTypeValidator:
 
         if content_type not in self.allowed_types:
 
-            allowed_types_display = [FILE_TYPE_MAP[mime_type, "Unknown Type"] for mime_type in self.allowed_types]
+            allowed_types_display = [FILE_TYPE_MAP.get(mime_type, "Unknown Type") for mime_type in self.allowed_types]
             message = f"Type of your {self.object_name_display} must be one of {allowed_types_display}"
 
             raise serializers.ValidationError(message)

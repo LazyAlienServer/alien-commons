@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "pages.apps.PagesConfig",
     "logs.apps.LogsConfig",
     "articles.apps.ArticlesConfig",
-    "comments.apps.CommentsConfig",
     # 3rd-party Apps
     "corsheaders",
     "rest_framework",
