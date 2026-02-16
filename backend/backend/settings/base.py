@@ -72,7 +72,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 
-    "EXCEPTION_HANDLER": "core.exceptions.custom_exception_handler",
+    "EXCEPTION_HANDLER": "core.views.exception_handler.custom_exception_handler",
 
     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
     "PAGE_SIZE": 20,
@@ -87,6 +87,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    "core.middleware.RequestMetaMiddleware"
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -135,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Australia/Melbourne"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
@@ -167,7 +168,7 @@ SITE_URL = env.str("SITE_URL")
 YOUTUBE_API_KEY = env.str("YOUTUBE_API_KEY")
 YOUTUBE_API_URL = f"https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&id={YOUTUBE_CHANNEL_ID}&key={YOUTUBE_API_KEY}"
 
-CELERY_TIMEZONE = "Australia/Melbourne"
+CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True

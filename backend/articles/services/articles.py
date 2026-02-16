@@ -6,12 +6,7 @@ from django.shortcuts import get_object_or_404
 from articles.models import (
     SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
 )
-from .exceptions import (
-    StateTransitionError,
-    CoolingDownError,
-    NoChangeError,
-    NoSnapshotError,
-)
+from core.exceptions import ServiceError
 from .utils import (
     hash_and_normalize, get_last_snapshot, get_published_version, within_submit_cooldown
 )
@@ -80,10 +75,16 @@ def submit(*, article_id, actor, annotation=None):
     # If submitted within 12 hours since last submission, raise CoolingDownError
     last_moderation_at = article.last_moderation_at
     if last_moderation_at and within_submit_cooldown(last_moderation_at, hours=6):
-        raise CoolingDownError("Submission has a cooldown of 6 hours.")
+        raise ServiceError(
+            detail="Submission has a cooldown of 6 hours.",
+            code='cooldown_error'
+        )
 
     if article.status == SourceArticle.ArticleStatus.PENDING:
-        raise StateTransitionError("You cannot submit a pending article!")
+        raise ServiceError(
+            detail="You cannot submit a pending article!",
+            code='state_transition_error'
+        )
 
     current_hash = hash_and_normalize(
         article.title,
@@ -93,9 +94,10 @@ def submit(*, article_id, actor, annotation=None):
     # If unchanged, raise NoChangeError
     last_snapshot = get_last_snapshot(article)
     if last_snapshot and last_snapshot.content_hash == current_hash:
-        raise NoChangeError("Please modify before submission.")
-
-    # Business Logic
+        raise ServiceError(
+            detail="Please modify before submission.",
+            code='no_change_error'
+        )
 
     # Create Snapshot
     snapshot = ArticleSnapshot.objects.create(
@@ -123,7 +125,10 @@ def withdraw(*, article_id, actor, annotation=None):
     article = select_article_for_update(article_id)
 
     if article.status != SourceArticle.ArticleStatus.PENDING:
-        raise StateTransitionError("You can only withdraw a pending article!")
+        raise ServiceError(
+            detail="You can only withdraw a pending article!",
+            code='state_transition_error'
+        )
 
     snapshot = get_last_snapshot(article)
 
@@ -149,11 +154,17 @@ def approve(*, article_id, actor, annotation=None):
 
     # Can only approve when the Source Article is PENDING
     if article.status != SourceArticle.ArticleStatus.PENDING:
-        raise StateTransitionError("Only a pending article can be approved!")
+        raise ServiceError(
+            detail="Only a pending article can be approved!",
+            code='state_transition_error'
+        )
 
     snapshot = get_last_snapshot(article)
     if not snapshot:
-        raise NoSnapshotError("There are no snapshots for this article!")
+        raise ServiceError(
+            detail="There are no snapshots for this article!",
+            code='no_change_error'
+        )
 
     create_or_update_published_article(article=article, snapshot=snapshot)
 
@@ -180,11 +191,17 @@ def reject(*, article_id, actor, annotation=None):
 
     # Can only reject when the Source Article is PENDING
     if article.status != SourceArticle.ArticleStatus.PENDING:
-        raise StateTransitionError("Only a pending article can be rejected!")
+        raise ServiceError(
+            detail="Only a pending article can be rejected!",
+            code='state_transition_error'
+        )
 
     snapshot = get_last_snapshot(article)
     if not snapshot:
-        raise NoSnapshotError("There are no snapshots for this article!")
+        raise ServiceError(
+            detail="There are no snapshots for this article!",
+            code='no_snapshot_error'
+        )
 
     # Create Article Event
     article_event = create_article_event(
@@ -209,11 +226,17 @@ def unpublish(*, article_id, actor, annotation=None):
 
     # Can only unpublish when the Source Article is PUBLISHED
     if article.status != SourceArticle.ArticleStatus.PUBLISHED:
-        raise StateTransitionError("Only a published article can be unpublished!")
+        raise ServiceError(
+            detail="Only a published article can be unpublished!",
+            code='state_transition_error'
+        )
 
     snapshot = get_last_snapshot(article)
     if not snapshot:
-        raise NoSnapshotError("There are no snapshots for this article!")
+        raise ServiceError(
+            detail="There are no snapshots for this article!",
+            code='no_snapshot_error'
+        )
 
     # Create Article Event
     article_event = create_article_event(
@@ -234,7 +257,10 @@ def delete(*, article_id, actor, annotation=None):
 
     # Can only delete when the Source Article is not PENDING
     if article.status == SourceArticle.ArticleStatus.PENDING:
-        raise StateTransitionError("A pending article cannot be deleted! Please withdraw it from moderation first.")
+        raise ServiceError(
+            detail="A pending article cannot be deleted! Please withdraw it from moderation first.",
+            code='state_transition_error'
+        )
 
     snapshot = get_last_snapshot(article)
 

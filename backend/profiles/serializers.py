@@ -21,12 +21,13 @@ from core.validators import (
     LengthValidator,
     RequiredValidator,
 )
+from core.serializers import BaseModelSerializer
 
 
 User = get_user_model()
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(BaseModelSerializer):
 
     class Meta:
         model = User
@@ -34,7 +35,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'email', 'is_moderator', 'date_joined')
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(BaseModelSerializer):
     email = serializers.EmailField(
         validators=[
             UniqueValidator(queryset=User.objects.all(), message="The email has already existed"),
@@ -78,7 +79,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class UsernameUpdateSerializer(serializers.ModelSerializer):
+class UsernameUpdateSerializer(BaseModelSerializer):
     username = serializers.CharField(
         max_length=100,
         validators=[
@@ -92,7 +93,7 @@ class UsernameUpdateSerializer(serializers.ModelSerializer):
         fields = ('username',)
 
 
-class AvatarUpdateSerializer(serializers.ModelSerializer):
+class AvatarUpdateSerializer(BaseModelSerializer):
     avatar = serializers.ImageField(
         validators=[
             FileSizeValidator(object_display_name="avatar", max_size_mb=2),

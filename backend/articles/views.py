@@ -1,11 +1,11 @@
 from rest_framework import status
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
-from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
 from django.db.models import OuterRef, Subquery
 
-from core.permissions import is_moderator
+from core.utils.permissions import is_moderator
+from core.views.viewsets import MyModelViewSet, MyReadOnlyModelViewSet, FormattedResponseMixin
 from .filters import SourceArticleFilter
 from .permissions import (
     SourceArticlePermission,
@@ -29,7 +29,7 @@ from .services.articles import (
 )
 
 
-class SourceArticleViewSet(ModelViewSet):
+class SourceArticleViewSet(MyModelViewSet):
     permission_classes = (SourceArticlePermission,)
     queryset = SourceArticle.objects.select_related("author")
     filter_backends = [filters.DjangoFilterBackend]
@@ -74,7 +74,12 @@ class SourceArticleViewSet(ModelViewSet):
             context=self.get_serializer_context(),
         )
 
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        return self.format_success_response(
+            message="created",
+            code='created',
+            data=output_serializer.data,
+            status_code=status.HTTP_201_CREATED,
+        )
 
     @action(detail=False, methods=['post'], url_path='upload_article_image')
     def upload_article_image(self, request):
@@ -83,16 +88,21 @@ class SourceArticleViewSet(ModelViewSet):
 
         result = serializer.save()
 
-        return Response(result, status=status.HTTP_200_OK)
+        return self.format_success_response(
+            message="uploaded",
+            code='uploaded',
+            data=result,
+            status_code=status.HTTP_200_OK,
+        )
 
 
-class PublishedArticleViewSet(ReadOnlyModelViewSet):
+class PublishedArticleViewSet(MyReadOnlyModelViewSet):
     queryset = PublishedArticle.objects.all()
     serializer_class = PublishedArticleSerializer
     permission_classes = (PublishedArticlePermission,)
 
 
-class ArticleSnapshotViewSet(ReadOnlyModelViewSet):
+class ArticleSnapshotViewSet(MyReadOnlyModelViewSet):
     queryset = ArticleSnapshot.objects.all()
     serializer_class = ArticleSnapshotSerializer
     permission_classes = (ArticleSnapshotPermission,)
@@ -105,10 +115,15 @@ class ArticleSnapshotViewSet(ReadOnlyModelViewSet):
         queryset = ArticleSnapshot.objects.filter(moderation_status=ArticleSnapshot.SnapshotStatus.PENDING)
         serializer = self.get_serializer(queryset, many=True)
 
-        return Response(serializer.data)
+        return self.format_success_response(
+            message="pending articles listed",
+            code='listed',
+            data=serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
 
-class ArticleEventReadViewset(ReadOnlyModelViewSet):
+class ArticleEventReadViewset(MyReadOnlyModelViewSet):
     queryset = ArticleEvent.objects.all()
     permission_classes = (ArticleEventPermission,)
     serializer_class = ArticleEventSerializer
@@ -120,7 +135,7 @@ class ArticleEventReadViewset(ReadOnlyModelViewSet):
         return ArticleEvent.objects.filter(article__author=user)
 
 
-class ArticleActionViewset(GenericViewSet):
+class ArticleActionViewset(FormattedResponseMixin, GenericViewSet):
     queryset = SourceArticle.objects.all()
     lookup_field = "pk"
 
@@ -137,7 +152,12 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="submitted",
+            code='submitted',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def withdraw(self, request, pk=None):
@@ -152,7 +172,12 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="withdrawn",
+            code='withdrawn',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def approve(self, request, pk=None):
@@ -167,7 +192,12 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="approved",
+            code='approved',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def reject(self, request, pk=None):
@@ -182,7 +212,12 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="rejected",
+            code='rejected',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def unpublish(self, request, pk=None):
@@ -197,7 +232,12 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="unpublished",
+            code='unpublished',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[SourceArticlePermission,])
     def delete(self, request, pk=None):
@@ -212,4 +252,9 @@ class ArticleActionViewset(GenericViewSet):
 
         output_serializer = ArticleActionOutputSerializer(result)
 
-        return Response(output_serializer.data)
+        return self.format_success_response(
+            message="deleted",
+            code='deleted',
+            data=output_serializer.data,
+            status_code=status.HTTP_200_OK,
+        )

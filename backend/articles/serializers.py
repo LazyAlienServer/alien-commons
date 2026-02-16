@@ -9,7 +9,8 @@ from rest_framework.request import Request
 from core.validators import (
     RequiredValidator, LengthValidator, FileTypeValidator, FileSizeValidator
 )
-from core.permissions import is_moderator
+from core.utils.permissions import is_moderator
+from core.serializers import BaseSerializer, BaseModelSerializer
 from .models import SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
 
 import uuid
@@ -20,7 +21,7 @@ from pathlib import Path
 User = get_user_model()
 
 
-class SourceArticleReadSerializer(serializers.ModelSerializer):
+class SourceArticleReadSerializer(BaseModelSerializer):
     """
     Serializer for moderators
     """
@@ -53,7 +54,7 @@ class SourceArticleReadSerializer(serializers.ModelSerializer):
         return obj.get_status_display()
 
 
-class SourceArticleWriteSerializer(serializers.ModelSerializer):
+class SourceArticleWriteSerializer(BaseModelSerializer):
     """
     Serializer for the author, can be used to create/update
     """
@@ -113,7 +114,7 @@ class ImageUploadSerializer(serializers.Serializer):
         }
 
 
-class PublishedArticleSerializer(serializers.ModelSerializer):
+class PublishedArticleSerializer(BaseModelSerializer):
     """
     Serializer for published articles. All fields are ready-only.
     """
@@ -131,7 +132,7 @@ class PublishedArticleSerializer(serializers.ModelSerializer):
         )
 
 
-class ArticleSnapshotSerializer(serializers.ModelSerializer):
+class ArticleSnapshotSerializer(BaseModelSerializer):
     """
     Serializer for article snapshots. All fields are ready-only.
     """
@@ -159,7 +160,7 @@ class ArticleSnapshotSerializer(serializers.ModelSerializer):
         return obj.article_id
 
 
-class ArticleEventSerializer(serializers.ModelSerializer):
+class ArticleEventSerializer(BaseModelSerializer):
     """
     Serializer for article moderation events. All fields are ready-only except annotation.
     """
@@ -197,7 +198,7 @@ class ArticleEventSerializer(serializers.ModelSerializer):
         return ArticleEvent.objects.create(**validated_data)
 
 
-class ArticleActionInputSerializer(serializers.Serializer):
+class ArticleActionInputSerializer(BaseSerializer):
     """
     The input serializer for all article actions,
     which include submit, approve, reject, unpublish and delete
@@ -205,7 +206,7 @@ class ArticleActionInputSerializer(serializers.Serializer):
     annotation = serializers.CharField(required=False, allow_blank=True)
 
 
-class ArticleActionOutputSerializer(serializers.Serializer):
+class ArticleActionOutputSerializer(BaseSerializer):
     event_type = serializers.IntegerField()
     actor_id = serializers.UUIDField()
     article_id = serializers.UUIDField()

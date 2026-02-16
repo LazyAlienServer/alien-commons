@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from core.permissions import is_moderator, is_the_author
+from core.utils.permissions import is_moderator, is_the_author
 
 
 class SourceArticlePermission(permissions.BasePermission):
