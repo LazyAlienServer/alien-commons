@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { loginUser, getUserProfile, refreshUserLoginToken } from "@/features/user/api";
+import { retrieveMyProfile, loginUser, refreshUserLoginToken } from "@/features/user/api";
 import { setRefreshToken, getRefreshToken, removeRefreshToken } from "@/utils";
 
 export const useUserStore = defineStore('user', () => {
@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
 
     /* actions */
     async function loadUserInfo() {
-        const response = await getUserProfile();
+        const response = await retrieveMyProfile();
 
         userInfo.value = response.data;
     }

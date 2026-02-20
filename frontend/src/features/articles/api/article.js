@@ -3,7 +3,7 @@ import { api } from '@/api'
 
 function getMySourceArticles(query = undefined) {
     return api.get(
-        '/article/source_articles/',
+        '/source_articles/',
         {
             withCredentials: true,
             params: query,
@@ -12,16 +12,16 @@ function getMySourceArticles(query = undefined) {
 }
 
 function getTheSourceArticle(id) {
-    return api.get(`/article/source_articles/${id}/`, { withCredentials: true });
+    return api.get(`/source_articles/${id}/`, { withCredentials: true });
 }
 
 function createSourceArticle() {
-    return api.post(`/article/source_articles/`)
+    return api.post(`/source_articles/`)
 }
 
 function updateSourceArticle(id, title, content) {
     return api.patch(
-        `/article/source_articles/${id}/`,
+        `/source_articles/${id}/`,
         {
             title: title,
             content: content,
@@ -32,7 +32,7 @@ function updateSourceArticle(id, title, content) {
 
 function submitArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/submit/`,
+        `/source_articles/${id}/submit/`,
         {},
         { withCredentials: true }
     );
@@ -40,7 +40,7 @@ function submitArticle(id) {
 
 function withdrawArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/withdraw/`,
+        `/source_articles/${id}/withdraw/`,
         {},
         { withCredentials: true }
     );
@@ -48,7 +48,7 @@ function withdrawArticle(id) {
 
 function approveArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/approve/`,
+        `/source_articles/${id}/approve/`,
         {},
         { withCredentials: true }
     );
@@ -56,7 +56,7 @@ function approveArticle(id) {
 
 function rejectArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/reject/`,
+        `/source_articles/${id}/reject/`,
         {},
         { withCredentials: true }
     );
@@ -64,7 +64,7 @@ function rejectArticle(id) {
 
 function unpublishArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/unpublish/`,
+        `/source_articles/${id}/unpublish/`,
         {},
         { withCredentials: true }
     );
@@ -72,7 +72,7 @@ function unpublishArticle(id) {
 
 function deleteArticle(id) {
     return api.post(
-        `/article/article_actions/${id}/delete/`,
+        `/source_articles/${id}/delete/`,
         {},
         { withCredentials: true }
     );
@@ -81,7 +81,7 @@ function deleteArticle(id) {
 function uploadArticleImage(formData) {
 
     return api.post(
-        `/article/source_articles/images/`,
+        `/source_articles/images/`,
         formData,
         {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -91,19 +91,19 @@ function uploadArticleImage(formData) {
 }
 
 function getPendingArticles() {
-    return api.get('/article/article_snapshots/pending/', { withCredentials: true });
+    return api.get('/article_snapshots/pending/', { withCredentials: true });
 }
 
 function getThePendingArticle(id) {
-    return api.get(`/article/article_snapshots/${id}/`, { withCredentials: true });
+    return api.get(`/article_snapshots/${id}/`, { withCredentials: true });
 }
 
 function getPublishedArticles() {
-    return api.get('/article/published_articles/');
+    return api.get('/published_articles/');
 }
 
 function getThePublishedArticle(id) {
-    return api.get(`/article/published_articles/${id}/`);
+    return api.get(`/published_articles/${id}/`);
 }
 
 export {

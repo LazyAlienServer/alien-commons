@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { registerUser } from '@/features/user/api'
+import { createProfile } from '@/features/user/api'
 import { useToast } from "vue-toastification";
 import { MailIcon, KeyIcon } from "@/assets/icons"
 
@@ -17,7 +17,7 @@ async function handleRegister() {
   loading.value = true;
 
   try {
-    await registerUser(email.value, password.value, confirmPassword.value);
+    await createProfile(email.value, password.value, confirmPassword.value);
     toast.success('Successfully signed up!');
     await router.push({ name: 'login' });
 

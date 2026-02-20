@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useUserStore } from "@/features/user/stores";
-import { uploadAvatar, updateUsername } from "@/features/user/api";
+import { updateAvatar, updateUsername } from "@/features/user/api";
 import { useToast } from "vue-toastification";
 import { PencilIcon, PersonIcon, MailIcon, RocketIcon } from "@/assets/icons"
 
@@ -23,7 +23,7 @@ async function handleFile(event) {
   if (!file) return;
 
   try {
-    const response = await uploadAvatar(file);
+    const response = await updateAvatar(file);
     userInfo.value = response.data
     toast.success('Avatar updated successfully!');
 

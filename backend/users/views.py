@@ -54,7 +54,6 @@ class AuthViewSet(FormattedResponseMixin, viewsets.ViewSet):
 class ProfileViewSet(MyCreateModelMixin,
                      MyListModelMixin,
                      MyRetrieveModelMixin,
-                     MyUpdateModelMixin,
                      FormattedResponseMixin,
                      viewsets.GenericViewSet):
     """
@@ -69,8 +68,6 @@ class ProfileViewSet(MyCreateModelMixin,
         'create': ProfileCreateSerializer,
         'list': ProfileListSerializer,
         'retrieve': ProfileRetrieveSerializer,
-        'update': ProfileUpdateSerializer,
-        'partial_update': ProfileUpdateSerializer,
     }
 
     def get_serializer_class(self):
@@ -81,16 +78,29 @@ class ProfileViewSet(MyCreateModelMixin,
         self.action: str
         if self.action in ('create', 'list', 'retrieve'):
             return [AllowAny]
-        if self.action in ('me', 'update', 'partial_update'):
+        if self.action in ('me',):
             return [IsAuthenticated]
 
-    @action(detail=False, methods=['get'], url_path='me')
+    @action(detail=False, methods=['get', 'patch'], url_path='me')
     def me(self, request):
-        serializer = ProfileRetrieveSerializer(request.user)
+        user = request.user
+        if request.method == 'GET':
+            serializer = ProfileRetrieveSerializer(user)
+
+            return self.format_success_response(
+                message="my profile retrieved",
+                code='my_profile_retrieved',
+                data=serializer.data,
+                status_code=status.HTTP_200_OK
+            )
+
+        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
         return self.format_success_response(
-            message="my profile retrieved",
-            code='my_profile_retrieved',
+            message="my profile updated",
+            code='my_profile_updated',
             data=serializer.data,
             status_code=status.HTTP_200_OK
         )
