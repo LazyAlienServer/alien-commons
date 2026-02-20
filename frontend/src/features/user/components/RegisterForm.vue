@@ -22,7 +22,7 @@ async function handleRegister() {
     await router.push({ name: 'login' });
 
   } catch (error) {
-    const msg = error.response.data.toast_error
+    const msg = error.response?.data?.message
     toast.error(msg)
     console.error("Register failed, ", error)
 
