@@ -99,7 +99,7 @@ def submit(*, article_id, actor, annotation=None):
             code='no_change_error'
         )
 
-    # Create Snapshot
+    # Create snapshot
     snapshot = ArticleSnapshot.objects.create(
         article=article,
         title=article.title,
@@ -108,12 +108,12 @@ def submit(*, article_id, actor, annotation=None):
         moderation_status=ArticleSnapshot.SnapshotStatus.PENDING
     )
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.SUBMIT, actor=actor
     )
 
-    # Update Source Article
+    # Update source article
     article.status = SourceArticle.ArticleStatus.PENDING
     article.save(update_fields=['status'])
 
@@ -132,16 +132,16 @@ def withdraw(*, article_id, actor, annotation=None):
 
     snapshot = get_last_snapshot(article)
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.WITHDRAW, actor=actor
     )
 
-    # Update Source Article
+    # Update source article
     article.status = SourceArticle.ArticleStatus.DRAFT
     article.save(update_fields=['status'])
 
-    # Update Last Article Snapshot
+    # Update last article snapshot
     snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.WITHDRAWN
     snapshot.save(update_fields=['moderation_status'])
 
@@ -168,17 +168,17 @@ def approve(*, article_id, actor, annotation=None):
 
     create_or_update_published_article(article=article, snapshot=snapshot)
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.APPROVE, actor=actor
     )
 
-    # Update Source Article
+    # Update source article
     article.status = SourceArticle.ArticleStatus.PUBLISHED
     article.last_moderation_at = timezone.now()
     article.save(update_fields=['status', 'last_moderation_at'])
 
-    # Update Last Article Snapshot
+    # Update last article snapshot
     snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.APPROVED
     snapshot.save(update_fields=['moderation_status'])
 
@@ -203,17 +203,17 @@ def reject(*, article_id, actor, annotation=None):
             code='no_snapshot_error'
         )
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.REJECT, actor=actor
     )
 
-    # Update Source Article
+    # Update source article
     article.status = SourceArticle.ArticleStatus.REJECTED
     article.last_moderation_at = timezone.now()
     article.save(update_fields=['status', 'last_moderation_at'])
 
-    # Update Last Article Snapshot
+    # Update last article snapshot
     snapshot.moderation_status = ArticleSnapshot.SnapshotStatus.REJECTED
     snapshot.save(update_fields=['moderation_status'])
 
@@ -238,12 +238,12 @@ def unpublish(*, article_id, actor, annotation=None):
             code='no_snapshot_error'
         )
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.UNPUBLISH, actor=actor
     )
 
-    # Update Source Article
+    # Update source article
     article.status = SourceArticle.ArticleStatus.UNPUBLISHED
     article.last_moderation_at = timezone.now()
     article.save(update_fields=['status', 'last_moderation_at'])
@@ -252,7 +252,7 @@ def unpublish(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def delete(*, article_id, actor, annotation=None):
+def soft_delete(*, article_id, actor, annotation=None):
     article = select_article_for_update(article_id)
 
     # Can only delete when the Source Article is not PENDING
@@ -266,14 +266,14 @@ def delete(*, article_id, actor, annotation=None):
 
     published_article = get_published_version(article)
 
-    # Soft Delete Source Article
+    # Soft delete source article
     article.delete()
 
-    # Delete Associated Published Article
+    # Delete associated published article
     if published_article:
         published_article.delete()
 
-    # Create Article Event
+    # Create article event
     article_event = create_article_event(
         article, snapshot, annotation, event_type=ArticleEvent.EventType.DELETE, actor=actor
     )

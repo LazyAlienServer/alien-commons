@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from core.validators import (
-    RequiredValidator, LengthValidator, FileTypeValidator, FileSizeValidator
+    FileTypeValidator, FileSizeValidator
 )
 from core.utils.permissions import is_moderator
 from core.serializers import BaseSerializer, BaseModelSerializer
@@ -62,7 +62,12 @@ class SourceArticleWriteSerializer(BaseModelSerializer):
     title = serializers.CharField(
         required=False,
         allow_blank=True,
-        validators=[RequiredValidator(field_name='title'), LengthValidator(field_name='title', max_length=60)],
+        max_length=60,
+        min_length=5,
+        error_messages={
+            'max_length': 'Title cannot be more than 60 characters',
+            'min_length': 'Title cannot be less than 5 characters',
+        },
     )
 
     class Meta:

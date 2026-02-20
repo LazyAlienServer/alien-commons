@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     # ASGI Server
     "daphne",
     # User App
-    "profiles.apps.ProfilesConfig",
+    "users.apps.ProfilesConfig",
     # Django Apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_celery_beat",
     "django_filters",
+    'drf_spectacular',
 ]
 
-AUTH_USER_MODEL = "profiles.Profile"
+AUTH_USER_MODEL = "users.Profile"
 
 # Custom setting - default user avatars
 DEFAULT_AVATARS = [
@@ -78,6 +79,13 @@ REST_FRAMEWORK = {
 
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",
     "DATE_FORMAT": "%Y-%m-%d",
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'AlienCommons',
+    'VERSION': '1.0.0',
 }
 
 SIMPLE_JWT = {
@@ -86,7 +94,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
-    "core.middleware.RequestMetaMiddleware"
+    "core.middleware.RequestMetaMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",

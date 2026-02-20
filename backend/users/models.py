@@ -53,7 +53,7 @@ class ProfileManager(BaseUserManager):
 
 
 class Profile(AbstractUser):
-    username = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
     avatar = models.ImageField(
         upload_to=avatar_upload_to,
@@ -61,7 +61,14 @@ class Profile(AbstractUser):
         null=True,
         storage=AvatarStorage()
     )
+    signature = models.CharField(
+        max_length=60,
+        blank=True,
+        default="This player is somewhat mysterious..."
+    )
     is_moderator = models.BooleanField(default=False)
+    first_name = None
+    last_name = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

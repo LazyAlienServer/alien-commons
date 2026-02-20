@@ -1,12 +1,17 @@
 from rest_framework import permissions
 
-from core.utils.permissions import is_moderator, is_the_author
+from core.utils.permissions import is_moderator
 
 
-class SourceArticlePermission(permissions.BasePermission):
+def is_the_author(user, obj):
+    return user.id == obj.author_id
+
+
+class AuthorOnly(permissions.BasePermission):
     """
-    Only the author and moderators can view an article.
-    Only the author can change title and content fields of the article
+    Only the author can access his/her articles.
+    Note that this only applies to detail actions.
+    To guarantee author-only access, restrictions must also be added into get_queryset.
     """
 
     def has_permission(self, request, view):
@@ -16,33 +21,22 @@ class SourceArticlePermission(permissions.BasePermission):
         return is_the_author(request.user, obj)
 
 
-class PublishedArticlePermission(permissions.BasePermission):
+class ModeratorOnly(permissions.BasePermission):
     """
-    Everyone can view a published article.
+    Only moderators can call certain endpoints.
     """
+
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
+        return request.user.is_authenticated and is_moderator(request.user)
 
     def has_object_permission(self, request, view, obj):
-        return request.method in permissions.SAFE_METHODS
-
-
-class ArticleSnapshotPermission(permissions.BasePermission):
-    """
-    Only moderators can view snapshots.
-    """
-
-    def has_permission(self, request, view):
         return is_moderator(request.user)
-
-    def has_object_permission(self, request, view, obj):
-        return request.method in permissions.SAFE_METHODS
 
 
 class ArticleEventPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS and request.user.is_authenticated
+        return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        return request.method in permissions.SAFE_METHODS and (is_moderator(request.user) or is_the_author(request.user, obj.article))
+        return is_moderator(request.user) or is_the_author(request.user, obj.article)

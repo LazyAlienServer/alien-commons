@@ -81,7 +81,7 @@ function deleteArticle(id) {
 function uploadArticleImage(formData) {
 
     return api.post(
-        `/article/source_articles/upload_article_image/`,
+        `/article/source_articles/images/`,
         formData,
         {
             headers: { 'Content-Type': 'multipart/form-data' },
