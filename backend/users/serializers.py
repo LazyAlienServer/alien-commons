@@ -43,7 +43,7 @@ class ProfileCreateSerializer(BaseModelSerializer):
         error_messages={
             'required': 'A password is required',
         },
-        validators=[PasswordValidator],
+        validators=[PasswordValidator()],
     )
     confirm_password = serializers.CharField(
         write_only=True,

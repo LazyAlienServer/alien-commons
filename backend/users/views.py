@@ -77,9 +77,11 @@ class ProfileViewSet(MyCreateModelMixin,
     def get_permissions(self):
         self.action: str
         if self.action in ('create', 'list', 'retrieve'):
-            return [AllowAny]
+            self.permission_classes = [AllowAny]
         if self.action in ('me',):
-            return [IsAuthenticated]
+            self.permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in self.permission_classes]
 
     @action(detail=False, methods=['get', 'patch'], url_path='me')
     def me(self, request):

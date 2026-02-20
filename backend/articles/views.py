@@ -33,13 +33,14 @@ class SourceArticleViewSet(MyModelViewSet):
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = SourceArticleFilter
 
-    permission_classes_mapping = {
+    permission_class_mapping = {
         'create': [IsAuthenticated],
         'list': [AuthorOnly],
         'retrieve': [AuthorOnly],
         'update': [AuthorOnly],
+        'partial_update': [AuthorOnly],
         'destroy': [AuthorOnly],
-        'images': [AuthorOnly],
+        'upload_images': [AuthorOnly],
         'submit': [AuthorOnly],
         'withdraw': [AuthorOnly],
         'approve': [ModeratorOnly],
@@ -54,6 +55,12 @@ class SourceArticleViewSet(MyModelViewSet):
         if self.action in ('create', 'update', 'partial_update'):
             return SourceArticleWriteSerializer
         return SourceArticleReadSerializer
+
+    def get_permissions(self):
+        self.action: str
+        self.permission_classes = self.permission_class_mapping[self.action]
+
+        return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
         # Only authors can see his/her articles

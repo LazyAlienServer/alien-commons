@@ -207,6 +207,7 @@ paths:
       - profiles
       security:
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -236,6 +237,7 @@ paths:
         required: true
       security:
       - jwtAuth: []
+      - {}
       responses:
         '201':
           content:
@@ -261,6 +263,7 @@ paths:
       - profiles
       security:
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -268,80 +271,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProfileRetrieve'
           description: ''
-    put:
-      operationId: profiles_update
-      description: |-
-        A viewset that collects 4 API endpoints which relates to user module
-
-        Register, User List, Profile Info, Update (username, signature, avatar)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - profiles
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ProfileUpdate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ProfileUpdate'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProfileUpdate'
-        required: true
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProfileUpdate'
-          description: ''
-    patch:
-      operationId: profiles_partial_update
-      description: |-
-        A viewset that collects 4 API endpoints which relates to user module
-
-        Register, User List, Profile Info, Update (username, signature, avatar)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - profiles
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedProfileUpdate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedProfileUpdate'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedProfileUpdate'
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProfileUpdate'
-          description: ''
   /api/v1/profiles/me/:
     get:
       operationId: profiles_me_retrieve
+      description: |-
+        A viewset that collects 4 API endpoints which relates to user module
+
+        Register, User List, Profile Info, Update (username, signature, avatar)
+      tags:
+      - profiles
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: profiles_me_partial_update
       description: |-
         A viewset that collects 4 API endpoints which relates to user module
 
@@ -1121,19 +1066,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SourceArticleRead'
-    PatchedProfileUpdate:
-      type: object
-      description: |-
-        Update a user profile.
-        Only Username, Signature, Avatar are supported.
-      properties:
-        username:
-          type: string
-          maxLength: 20
-          minLength: 3
-        avatar:
-          type: string
-          format: uri
     PatchedSourceArticleWrite:
       type: object
       description: Serializer for the author, can be used to create/update
@@ -1213,22 +1145,6 @@ components:
       - id
       - is_moderator
       - signature
-      - username
-    ProfileUpdate:
-      type: object
-      description: |-
-        Update a user profile.
-        Only Username, Signature, Avatar are supported.
-      properties:
-        username:
-          type: string
-          maxLength: 20
-          minLength: 3
-        avatar:
-          type: string
-          format: uri
-      required:
-      - avatar
       - username
     PublishedArticle:
       type: object
