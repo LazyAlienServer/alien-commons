@@ -31,6 +31,7 @@ django-redis==5.4.0
 django-timezone-field==7.1
 djangorestframework==3.15.2
 djangorestframework_simplejwt==5.5.0
+drf-spectacular==0.29.0
 environs==14.1.1
 flower==2.0.1
 google-api-core==2.24.2
@@ -43,6 +44,9 @@ humanize==4.12.1
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
+inflection==0.5.1
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
 kombu==5.5.0
 marshmallow==3.26.2
 packaging==24.2
@@ -62,8 +66,11 @@ python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 pytz==2025.1
+PyYAML==6.0.3
 redis==5.2.1
+referencing==0.37.0
 requests==2.32.4
+rpds-py==0.30.0
 rsa==4.9
 service-identity==24.2.0
 setuptools==78.1.1

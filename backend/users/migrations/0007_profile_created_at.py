@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('profiles', '0006_remove_profile_google_id_profile_is_moderator'),
+        ('users', '0006_remove_profile_google_id_profile_is_moderator'),
     ]
 
     operations = [

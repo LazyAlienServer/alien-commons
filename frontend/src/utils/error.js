@@ -3,12 +3,12 @@ import logger from "./logger";
 function extractErrorMessage(err) {
     // axios backend response
     if (err?.response?.data?.detail) {
-        return err.response.data.detail;
+        return err.response.data.data.detail;
     }
 
     // axios response
     if (err?.response?.data) {
-        return JSON.stringify(err.response.data);
+        return JSON.stringify(err.response.data.data);
     }
 
     // JS errors

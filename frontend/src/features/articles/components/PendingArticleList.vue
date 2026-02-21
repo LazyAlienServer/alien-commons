@@ -7,7 +7,7 @@ const pendingArticles = ref([])
 
 onMounted(async() => {
   const response = await getPendingArticles()
-  pendingArticles.value = response.data
+  pendingArticles.value = response.data.data
   console.log("Load pending articles successfully!")
 })
 </script>

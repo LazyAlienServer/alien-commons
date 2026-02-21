@@ -50,7 +50,7 @@ async function createArticle() {
   loading.value = true
   try {
     const response = await createSourceArticle()
-    const id = response.data.id
+    const id = response.data.data.id
     console.log("Article successfully created!")
     toggleCreate()
     await router.push({
@@ -58,7 +58,7 @@ async function createArticle() {
       params: { id }
     })
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to create a new article", error)
   } finally {
     loading.value = false

@@ -12,8 +12,8 @@ const content = ref({ type: 'doc', content: [] })
 onMounted(async () => {
   const response = await getThePublishedArticle(route.params.id)
 
-  title.value = response.data.title
-  content.value = response.data.content
+  title.value = response.data.data.title
+  content.value = response.data.data.content
 
   console.log("load article successfully")
 })

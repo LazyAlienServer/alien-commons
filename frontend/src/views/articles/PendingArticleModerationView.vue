@@ -16,9 +16,9 @@ const articleId = ref(null)
 onMounted(async () => {
   const response = await getThePendingArticle(route.params.id)
 
-  title.value = response.data.title
-  content.value = response.data.content
-  articleId.value = response.data.article_id
+  title.value = response.data.data.title
+  content.value = response.data.data.content
+  articleId.value = response.data.data.article_id
 })
 
 const loading = ref(false);
@@ -32,7 +32,7 @@ async function handleApprove() {
     await router.push({ name: 'pending-articles' });
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to approve the article", error);
 
   } finally {
@@ -49,7 +49,7 @@ async function handleReject() {
     await router.push({ name: 'pending-articles' });
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to reject the article", error);
 
   } finally {

@@ -208,7 +208,7 @@ async function handleImageUpload(editor, files) {
 
     try {
       const response = await uploadArticleImage(formData)
-      const url = response.data.url
+      const url = response.data.data.url
       const imageUrl =  import.meta.env.VITE_API_BASE_URL + url
 
       editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run()

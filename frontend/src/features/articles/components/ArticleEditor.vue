@@ -48,13 +48,13 @@ async function handleImageUpload(editor, files) {
 
     try {
       const response = await uploadArticleImage(formData)
-      const url = response.data.url
+      const url = response.data.data.url
       const imageUrl =  import.meta.env.VITE_API_BASE_URL + url
 
       editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run()
 
     } catch (error) {
-      console.error('Image upload failed', error)
+      console.log('Image upload failed')
       toast.error('Image upload failed')
     }
   }
@@ -152,9 +152,9 @@ const content_editor = useEditor({
 onMounted(async () => {
   const response = await getTheSourceArticle(route.params.id)
 
-  id.value = response.data.id
-  title.value = response.data.title
-  content.value = response.data.content
+  id.value = response.data.data.id
+  title.value = response.data.data.title
+  content.value = response.data.data.content
 
   title_editor.value.commands.setContent(title.value)
   content_editor.value.commands.setContent(content.value)
@@ -177,7 +177,7 @@ async function handleSave() {
     emit('saved')
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to save the article", error);
 
   } finally {
@@ -200,7 +200,7 @@ async function handleSubmit() {
     await router.push({ name: 'article-review', params: { id } });
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to submit the article", error);
 
   } finally {
@@ -217,7 +217,7 @@ async function handleDelete() {
     await router.push({ name: 'my-articles' });
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error("Failed to delete the article", error);
 
   } finally {
