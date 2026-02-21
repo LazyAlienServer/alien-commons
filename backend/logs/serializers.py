@@ -1,10 +1,9 @@
-from rest_framework import serializers
-
 from .models import FELog
 from core.fields import FlexibleDateTimeField
+from core.serializers import BaseSerializer, BaseModelSerializer
 
 
-class SingleFELogSerializer(serializers.ModelSerializer):
+class SingleFELogSerializer(BaseModelSerializer):
     timestamp = FlexibleDateTimeField(required=True)
 
     class Meta:
@@ -12,7 +11,7 @@ class SingleFELogSerializer(serializers.ModelSerializer):
         fields = ['level', 'message', 'extra', 'timestamp', 'page']
 
 
-class ListFELogSerializer(serializers.Serializer):
+class ListFELogSerializer(BaseSerializer):
     logs = SingleFELogSerializer(many=True)
 
     def create(self, validated_data):

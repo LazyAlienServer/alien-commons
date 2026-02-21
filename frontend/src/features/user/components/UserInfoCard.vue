@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useUserStore } from "@/features/user/stores";
-import { uploadAvatar, updateUsername } from "@/features/user/api";
+import { updateAvatar, updateUsername } from "@/features/user/api";
 import { useToast } from "vue-toastification";
 import { PencilIcon, PersonIcon, MailIcon, RocketIcon } from "@/assets/icons"
 
@@ -23,12 +23,12 @@ async function handleFile(event) {
   if (!file) return;
 
   try {
-    const response = await uploadAvatar(file);
-    userInfo.value = response.data
+    const response = await updateAvatar(file);
+    userInfo.value = response.data.data
     toast.success('Avatar updated successfully!');
 
   } catch (error) {
-    toast.error(error.response?.data?.toast_error);
+    toast.error(error.response?.data?.message);
     console.error('Avatar update failed:', error);
   }
 }
@@ -47,11 +47,11 @@ async function handleUsernameUpdate() {
 
   try {
     const response = await updateUsername(newUsername.value)
-    userInfo.value = response.data
+    userInfo.value = response.data.data
     toast.success('Username updated successfully!');
 
   } catch (error) {
-    const msg = error.response?.data?.toast_error
+    const msg = error.response?.data?.message
     toast.error(msg);
     console.error('Update username failed', error)
 

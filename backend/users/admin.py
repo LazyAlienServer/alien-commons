@@ -9,19 +9,25 @@ User = get_user_model()
 @admin.register(User)
 class ProfileAdmin(UserAdmin):
     model = User
-    list_display = ('email', 'username', 'is_moderator')
-    ordering = ('email',)
-    search_fields = ('email', 'username')
+    list_display = ('id', 'email', 'username', 'is_moderator')
+    ordering = ('id',)
+    search_fields = ('=id', 'email', 'username')
 
-    readonly_fields = ('date_joined', 'last_login')
+    readonly_fields = ('id', 'date_joined', 'last_login')
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('username', 'avatar')}),
+        (None, {
+            'fields': ('id', 'email', 'password')
+        }),
+        ('Personal info', {
+            'fields': ('username', 'avatar', 'signature')
+        }),
         ('Permissions', {
             'fields': ('is_active', 'is_moderator', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Important dates', {
+            'fields': ('last_login', 'date_joined')
+        }),
     )
 
     add_fieldsets = (
@@ -30,5 +36,3 @@ class ProfileAdmin(UserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-
-    username_field = "username"

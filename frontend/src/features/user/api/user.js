@@ -1,52 +1,64 @@
 import { api, apiBare } from '@/api'
 
-function registerUser(email, password, confirmPassword) {
-    return apiBare.post('/user/register/', {
+function createProfile(email, password, confirmPassword) {
+    return apiBare.post('/profiles/', {
         email: email,
         password: password,
         confirm_password: confirmPassword
     });
 }
 
-function loginUser(email, password) {
-    return apiBare.post('/user/login/', {
-        email: email,
-        password: password,
-    });
+function listProfiles() {
+    return api.get('/profiles/');
 }
 
-function uploadAvatar(file) {
+function retrieveProfile(id) {
+    return api.get(
+        `/profiles/${id}/`,
+    );
+}
+
+function retrieveMyProfile() {
+    return api.get(
+        '/profiles/me/',
+        { withCredentials: true },
+    );
+}
+
+function updateAvatar(file) {
     const formData = new FormData();
     formData.append('avatar', file);
-    return api.patch('/user/update_avatar/', formData, {
+    return api.patch(`/profiles/me/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
 }
 
 function updateUsername(name) {
-    return api.patch('/user/update_username/', {
+    return api.patch('/profiles/me/', {
         username: name,
     })
 }
 
-function getUserProfile() {
-    return api.get(
-        '/user/profile/',
-        { withCredentials: true },
-    );
+function loginUser(email, password) {
+    return apiBare.post('/auth/login/', {
+        email: email,
+        password: password,
+    });
 }
 
 function refreshUserLoginToken(refreshToken) {
     return apiBare.post(
-        '/user/refresh_login_token/',
+        '/auth/refresh_login_token/',
         { refresh: refreshToken });
 }
 
 export {
-    registerUser,
-    loginUser,
-    uploadAvatar,
+    createProfile,
+    listProfiles,
+    retrieveProfile,
+    retrieveMyProfile,
+    updateAvatar,
     updateUsername,
-    getUserProfile,
+    loginUser,
     refreshUserLoginToken,
 }

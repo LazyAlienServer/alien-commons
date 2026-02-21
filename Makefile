@@ -6,6 +6,7 @@ staging:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d --build
 traefik:
 	docker compose -f docker-compose.traefik.yml up -d
+
 devdown:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml down
 prodown:
@@ -14,16 +15,19 @@ stagingdown:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml down
 traefikdown:
 	docker compose -f docker-compose.traefik.yml down
+
 devdownv:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 stagingdownv:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml down -v
+
 devwebbash:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml exec backend bash
 prowebbash:
 	docker compose -f docker-compose.yml -f docker-compose.pro.yml exec backend bash
 stagingwebbash:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml exec backend bash
+
 probackendlog:
 	docker compose -f docker-compose.yml -f docker-compose.pro.yml logs backend
 profrontendlog:
@@ -34,3 +38,6 @@ stagingfrontendlog:
 	docker compose -f docker-compose.yml -f docker-compose.staging.yml logs frontend
 traefiklog:
 	docker compose -f docker-compose.traefik.yml logs traefik
+
+apidoc:
+	python manage.py spectacular --file openapi.yaml

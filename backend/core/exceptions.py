@@ -1,52 +1,18 @@
-from rest_framework.views import exception_handler
 from rest_framework import status
-from rest_framework.response import Response
-
-from articles.services.exceptions import (
-    StateTransitionError,
-    NoChangeError,
-    CoolingDownError,
-    NoSnapshotError,
-)
-
-EXCEPTION_STATUS_REGISTRY = {}
 
 
-def register_exception(exception_class, status_code):
+class ServiceError(Exception):
     """
-    This function maps exception classes to status codes
+    The exception class for all service-layer errors.
     """
 
-    EXCEPTION_STATUS_REGISTRY[exception_class] = status_code
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Request failed"
+    default_code = "service_error"
 
-
-register_exception(StateTransitionError, status.HTTP_409_CONFLICT)
-register_exception(NoChangeError, status.HTTP_400_BAD_REQUEST)
-register_exception(CoolingDownError, status.HTTP_429_TOO_MANY_REQUESTS)
-register_exception(NoSnapshotError, status.HTTP_409_CONFLICT)
-
-
-def extract_toast_error(data):
-    first_error = next(iter(data.values()))
-
-    if isinstance(first_error, list):
-        first_error = first_error[0]
-
-    return first_error
-
-
-def custom_exception_handler(exc, context):
-    response = exception_handler(exc, context)
-
-    if response is None:
-        for exception_class, status_code in EXCEPTION_STATUS_REGISTRY.items():
-            if isinstance(exc, exception_class):
-                response = Response({"detail": str(exc)}, status=status_code)
-                break
-
-    if response is not None:
-        toast_error = extract_toast_error(response.data)
-        response.data['toast_error'] = toast_error
-        response.data['success'] = status.is_success(response.status_code)
-
-    return response
+    def __init__(self, *, detail=None, code=None, status_code=None):
+        self.detail = self.default_detail if detail is None else detail
+        self.code = self.default_code if code is None else code
+        if status_code is not None:
+            self.status_code = status_code
+        super().__init__(str(self.detail))
