@@ -99,8 +99,8 @@ class ProfileListSerializer(BaseModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'avatar', 'username')
-        read_only_fields = ('id', 'avatar', 'username')
+        fields = ('id', 'avatar', 'username', 'signature')
+        read_only_fields = ('id', 'avatar', 'username', 'signature')
 
 
 class ProfileRetrieveSerializer(BaseModelSerializer):

@@ -53,6 +53,11 @@ class ProfileManager(BaseUserManager):
 
 
 class Profile(AbstractUser):
+    """
+    The User model.
+    'id' field is explicitly set in this model.
+    """
+    id = models.BigAutoField(primary_key=True)
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
     avatar = models.ImageField(

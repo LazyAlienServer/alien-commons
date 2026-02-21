@@ -3,6 +3,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
+from uuid import UUID
+from typing import TypedDict, Any
+
 from articles.models import (
     SourceArticle, PublishedArticle, ArticleSnapshot, ArticleEvent
 )
@@ -11,11 +14,10 @@ from .utils import (
     hash_and_normalize, get_last_snapshot, get_published_version, within_submit_cooldown
 )
 
-
 User = get_user_model()
 
 
-def select_article_for_update(article_id):
+def select_article_for_update(article_id: UUID) -> SourceArticle:
     article = get_object_or_404(
         SourceArticle.objects.select_for_update(),
         pk=article_id,
@@ -24,7 +26,11 @@ def select_article_for_update(article_id):
     return article
 
 
-def create_article_event(article, snapshot, annotation, event_type, actor):
+def create_article_event(
+        *,
+        article: SourceArticle, snapshot: ArticleSnapshot,
+        annotation: str | None, event_type: ArticleEvent.EventType, actor: User
+) -> ArticleEvent:
 
     article_event = ArticleEvent.objects.create(
         article=article,
@@ -37,7 +43,11 @@ def create_article_event(article, snapshot, annotation, event_type, actor):
     return article_event
 
 
-def create_or_update_published_article(*, article, snapshot):
+def create_or_update_published_article(
+        *,
+        article: SourceArticle, snapshot: ArticleSnapshot,
+) -> PublishedArticle:
+
     published = get_published_version(article)
 
     if published:
@@ -56,7 +66,19 @@ def create_or_update_published_article(*, article, snapshot):
     return published_article
 
 
-def build_article_action_result(*, article, actor, event, snapshot):
+class ArticleActionResult(TypedDict):
+    event_type: int
+    actor_id: int
+    article_id: UUID | Any
+    status: int
+    snapshot_id: UUID | None | Any
+    event_id: UUID | Any
+
+
+def build_article_action_result(
+        *,
+        article: SourceArticle, actor: User, event: ArticleEvent, snapshot: ArticleSnapshot
+) -> ArticleActionResult:
 
     return {
         "event_type": event.event_type,
@@ -69,7 +91,11 @@ def build_article_action_result(*, article, actor, event, snapshot):
 
 
 @transaction.atomic
-def submit(*, article_id, actor, annotation=None):
+def submit(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     # If submitted within 12 hours since last submission, raise CoolingDownError
@@ -110,7 +136,8 @@ def submit(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.SUBMIT, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.SUBMIT, actor=actor
     )
 
     # Update source article
@@ -121,7 +148,11 @@ def submit(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def withdraw(*, article_id, actor, annotation=None):
+def withdraw(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     if article.status != SourceArticle.ArticleStatus.PENDING:
@@ -134,7 +165,8 @@ def withdraw(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.WITHDRAW, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.WITHDRAW, actor=actor
     )
 
     # Update source article
@@ -149,7 +181,11 @@ def withdraw(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def approve(*, article_id, actor, annotation=None):
+def approve(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     # Can only approve when the Source Article is PENDING
@@ -170,7 +206,8 @@ def approve(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.APPROVE, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.APPROVE, actor=actor
     )
 
     # Update source article
@@ -186,7 +223,11 @@ def approve(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def reject(*, article_id, actor, annotation=None):
+def reject(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     # Can only reject when the Source Article is PENDING
@@ -205,7 +246,8 @@ def reject(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.REJECT, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.REJECT, actor=actor
     )
 
     # Update source article
@@ -221,7 +263,11 @@ def reject(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def unpublish(*, article_id, actor, annotation=None):
+def unpublish(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     # Can only unpublish when the Source Article is PUBLISHED
@@ -240,7 +286,8 @@ def unpublish(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.UNPUBLISH, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.UNPUBLISH, actor=actor
     )
 
     # Update source article
@@ -252,7 +299,11 @@ def unpublish(*, article_id, actor, annotation=None):
 
 
 @transaction.atomic
-def soft_delete(*, article_id, actor, annotation=None):
+def soft_delete(
+        *,
+        article_id: UUID, actor: User, annotation: str | None = None
+) -> ArticleActionResult:
+
     article = select_article_for_update(article_id)
 
     # Can only delete when the Source Article is not PENDING
@@ -262,6 +313,9 @@ def soft_delete(*, article_id, actor, annotation=None):
             code='state_transition_error'
         )
 
+    # For this method, snapshot may not be available
+    # as user may delete an article that has never been submitted.
+    # In this case, 'None' will be returned.
     snapshot = get_last_snapshot(article)
 
     published_article = get_published_version(article)
@@ -275,7 +329,8 @@ def soft_delete(*, article_id, actor, annotation=None):
 
     # Create article event
     article_event = create_article_event(
-        article, snapshot, annotation, event_type=ArticleEvent.EventType.DELETE, actor=actor
+        article=article, snapshot=snapshot,
+        annotation=annotation, event_type=ArticleEvent.EventType.DELETE, actor=actor
     )
 
     # Update Source Article

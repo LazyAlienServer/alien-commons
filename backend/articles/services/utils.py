@@ -6,6 +6,7 @@ import hashlib
 import json
 
 from articles.models import (
+    SourceArticle,
     ArticleSnapshot,
     PublishedArticle,
 )
@@ -29,7 +30,7 @@ def hash_and_normalize(title, content):
     return hashlib.sha256(items_json.encode('utf-8')).hexdigest()
 
 
-def get_last_snapshot(article):
+def get_last_snapshot(article: SourceArticle) -> ArticleSnapshot | None:
     """
     Return the most recent snapshot of the article
     """
