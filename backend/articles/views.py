@@ -71,8 +71,8 @@ class SourceArticleViewSet(MyModelViewSet):
             return queryset.none()
 
         queryset = queryset.filter(author=user)
-        last_snapshot_id = ArticleSnapshot.objects.filter(article_id=OuterRef("pk")).order_by("-created_at").values("id")[:1]
-        published_version_id = PublishedArticle.objects.filter(article_id=OuterRef("pk")).values("id")
+        last_snapshot_id = ArticleSnapshot.objects.filter(source_article_id=OuterRef("pk")).order_by("-created_at").values("id")[:1]
+        published_version_id = PublishedArticle.objects.filter(source_article_id=OuterRef("pk")).values("id")
 
         return queryset.annotate(
             last_snapshot_id=Subquery(last_snapshot_id),
@@ -86,12 +86,10 @@ class SourceArticleViewSet(MyModelViewSet):
         )
         input_serializer.is_valid(raise_exception=True)
 
-        instance = input_serializer.save(author=self.request.user)
-
-        instance = self.get_queryset().get(pk=instance.pk)
+        source_article = input_serializer.save(author=self.request.user)
 
         output_serializer = SourceArticleReadSerializer(
-            instance=instance,
+            instance=source_article,
             context=self.get_serializer_context(),
         )
 
@@ -122,7 +120,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = submit(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -142,7 +140,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = withdraw(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -162,7 +160,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = approve(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -182,7 +180,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = reject(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -202,7 +200,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = unpublish(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -222,7 +220,7 @@ class SourceArticleViewSet(MyModelViewSet):
         input_serializer.is_valid(raise_exception=True)
 
         result = soft_delete(
-            article_id=pk,
+            source_article_id=pk,
             actor=request.user,
             annotation=input_serializer.validated_data.get("annotation", None)
         )
@@ -273,4 +271,4 @@ class ArticleEventReadViewset(MyReadOnlyModelViewSet):
         user = self.request.user
         if is_moderator(user):
             return ArticleEvent.objects.all()
-        return ArticleEvent.objects.filter(article__author=user)
+        return ArticleEvent.objects.filter(source_article__author=user)
