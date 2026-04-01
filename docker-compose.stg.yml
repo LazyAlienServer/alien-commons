@@ -1,0 +1,139 @@
+services:
+  postgres:
+    volumes:
+      - postgres_data_stg:/var/lib/postgresql
+    env_file:
+    - ./env/.env.stg
+
+  redis:
+    command: >
+      sh -c 'redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    env_file:
+    - ./env/.env.stg
+
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: /code
+    restart: unless-stopped
+    command: >
+      sh -c "gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+    environment:
+      - DJANGO_ENV: stg
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend-api-stg.rule=Host(`api-stg.aliencommons.com`)"
+      - "traefik.http.routers.backend-api-stg.entrypoints=websecure"
+      - "traefik.http.routers.backend-api-stg.tls.certresolver=le"
+      - "traefik.http.services.backend-api-stg.loadbalancer.server.port=8000"
+    volumes:
+      - /srv/alien-commons/stg/media:/code/media
+      - /srv/alien-commons/stg/static:/code/staticfiles
+    
+  backend-task-scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: /code
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py runscheduler"
+    environment:
+      DJANGO_ENV: stg
+    volumes:
+      - ./backend:/code
+  
+  backend-task-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: /code
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py rqworker default email maintenance"
+    environment:
+      DJANGO_ENV: stg
+    volumes:
+      - ./backend:/code
+
+  alloy:
+    image: grafana/alloy:latest
+    restart: unless-stopped
+    command:
+      - run
+      - /etc/alloy/alloy.config.stg
+    volumes:
+      - ./observability/alloy/alloy.config.stg:/etc/alloy/alloy.config.stg:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+  
+  loki:
+    image: grafana/loki:latest
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/loki/loki.stg.yml
+    volumes:
+      - ./observability/loki/loki.stg.yml:/etc/loki/loki.stg.yml:ro
+      - /srv/alien-commons/stg/loki:/loki
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana-stg.rule=Host(`grafana-stg.aliencommons.com`)"
+      - "traefik.http.routers.grafana-stg.entrypoints=websecure"
+      - "traefik.http.routers.grafana-stg.tls.certresolver=le"
+      - "traefik.http.services.grafana-stg.loadbalancer.server.port=3000"
+    volumes:
+      - ./observability/grafana/provisioning/datasources/loki-data.stg.yml:/etc/grafana/provisioning/datasources/loki-data.stg.yml:ro
+      - /srv/alien-commons/stg/grafana:/var/lib/grafana
+    depends_on:
+      - loki
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_MODE: stg
+    working_dir: /code
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-stg.rule=Host(`stg.aliencommons.com`)"
+      - "traefik.http.routers.frontend-stg.entrypoints=websecure"
+      - "traefik.http.routers.frontend-stg.tls.certresolver=le"
+      - "traefik.http.services.frontend-stg.loadbalancer.server.port=80"
+  
+  media:
+    image: nginx:alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.media.rule=Host(`api-stg.aliencommons.com`) && PathPrefix(`/media`)"
+      - "traefik.http.routers.media.entrypoints=websecure"
+      - "traefik.http.routers.media.tls.certresolver=le"
+      - "traefik.http.services.media.loadbalancer.server.port=80"
+    restart: unless-stopped
+    volumes:
+      - /srv/alien-commons/stg/media:/usr/share/nginx/html/media:ro
+  
+  static:
+    image: nginx:alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.static.rule=Host(`api-stg.aliencommons.com`) && PathPrefix(`/static`)"
+      - "traefik.http.routers.static.entrypoints=websecure"
+      - "traefik.http.routers.static.tls.certresolver=le"
+      - "traefik.http.services.static.loadbalancer.server.port=80"
+    restart: unless-stopped
+    volumes:
+      - /srv/alien-commons/stg/static:/usr/share/nginx/html/static:ro
+
+volumes:
+  postgres_data_stg:
