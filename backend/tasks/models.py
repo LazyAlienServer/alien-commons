@@ -1,0 +1,132 @@
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from core.model_mixins import UUIDPrimaryKeyMixin
+
+
+class IntervalSchedule(models.Model):
+    """
+    Schedule executing on a regular interval.
+    """
+    class Periods(models.TextChoices):
+        MILLISECOND = 'millisecond', _('millisecond')
+        SECOND = 'second', _('second')
+        MINUTE = 'minute', _('minute')
+        HOUR = 'hour', _('hour')
+        DAY = 'day', _('day')
+        WEEK = 'week', _('week')
+
+    every = models.PositiveIntegerField(
+        verbose_name=_("number of periods"),
+        help_text=_("Number of interval periods to wait before next execution"),
+    )
+    period = models.CharField(
+        verbose_name=_("interval period"),
+        max_length=50, choices=Periods,
+        help_text=_("The type of period used by the schedule")
+    )
+
+    class Meta:
+        verbose_name = _("interval schedule")
+        verbose_name_plural = _("interval schedules")
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['every', 'period'],
+                name='unique_interval_schedule',
+            )
+        ]
+
+    def __str__(self):
+        return f"every {self.every} {self.period}"
+
+    @property
+    def in_seconds(self) -> float:
+        period_multiplier_mapping = {
+            'millisecond': 0.001,
+            'second': 1,
+            'minute': 60,
+            'hour': 3600,
+            'day': 86400,
+            'week': 604800,
+        }
+
+        multiplier = period_multiplier_mapping[self.period]
+        period_in_seconds = int(self.every) * multiplier
+
+        return period_in_seconds
+
+
+class PeriodicTask(UUIDPrimaryKeyMixin, models.Model):
+    """
+    Model representing a periodic task.
+    """
+    name = models.CharField(
+        max_length=150, unique=True,
+        verbose_name=_("name"),
+        help_text=_("A short, unique description for this task"),
+    )
+    description = models.TextField(
+        blank=True, default="",
+        verbose_name=_("description"),
+        help_text=_("A extended description for this task"),
+    )
+    task = models.CharField(
+        max_length=255,
+        verbose_name=_("task path"),
+        help_text=_("The path of the task function to be run")
+    )
+    queue_name = models.CharField(
+        max_length=100,
+        verbose_name=_("queue name"),
+        help_text=_("The name of the queue that this task belongs to"),
+    )
+    interval = models.ForeignKey(
+        IntervalSchedule, on_delete=models.PROTECT, related_name='periodic_tasks',
+        verbose_name=_("interval"),
+        help_text=_("The time between two task executions"),
+    )
+    args = models.JSONField(
+        default=list, blank=True,
+        verbose_name=_("positional arguments"),
+        help_text=_("The positional arguments passed to the function"),
+    )
+    kwargs = models.JSONField(
+        default=dict, blank=True,
+        verbose_name=_("keyword arguments"),
+        help_text=_("The keyword arguments passed to the function"),
+    )
+    is_enabled = models.BooleanField(
+        default=True, db_index=True,
+        verbose_name=_("enabled"),
+        help_text=_("Only enabled tasks will be queued"),
+    )
+    last_enqueued_at = models.DateTimeField(
+        null=True, blank=True, editable=False,
+        verbose_name=_("last enqueued at"),
+        help_text=_("The last enqueued DateTime of the task"),
+    )
+    next_enqueue_at = models.DateTimeField(
+        blank=True,
+        verbose_name=_("next enqueue at"),
+        help_text=_("The next enqueue DateTime of the task"),
+    )
+    last_started_at = models.DateTimeField(
+        null=True, blank=True, editable=False,
+        verbose_name=_("last started at"),
+        help_text=_("The last started DateTime of the task"),
+    )
+    last_finished_at = models.DateTimeField(
+        null=True, blank=True, editable=False,
+        verbose_name=_("last finished at"),
+        help_text=_("The last finished DateTime of the task"),
+    )
+
+    class Meta:
+        verbose_name = _("periodic task")
+        verbose_name_plural = _("periodic tasks")
+
+        ordering = ["-next_enqueue_at"]
+
+    def __str__(self):
+        return self.name

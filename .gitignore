@@ -23,6 +23,9 @@ media/
 staticfiles/
 test_db.sqlite3
 
+backend/runtime_logs/
+!backend/runtime_logs/.gitkeep
+
 # Frontend
 node_modules/
 dist/
@@ -31,9 +34,16 @@ yarn-debug.log*
 pnpm-debug.log*
 
 # Environment files
-env/backend.env.dev
-env/backend.env.pro
-env/backend.env.staging
+env/.env.pro
+env/.env.stg
+
+backend/.env.pro
+backend/.env.stg
+
 frontend/.env.local
 frontend/.env.*.local
 !frontend/.env.example
+
+# Grafana, Alloy and Loki
+observability/grafana/data/
+observability/loki/data/
