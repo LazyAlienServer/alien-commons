@@ -1,15 +1,16 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 
+import os
 from datetime import timedelta
 from pathlib import Path
 from environs import Env
 from corsheaders.defaults import default_headers
 
-env = Env()
-env.read_env()
-
 BASE_DIR = Path(__file__).resolve().parents[2]
+
+env = Env()
+
 
 """Core Settings"""
 ABSOLUTE_URL_OVERRIDES = {}
@@ -338,6 +339,7 @@ YEAR_MONTH_FORMAT = "F Y"
 
 X_FRAME_OPTIONS = "DENY"
 
+
 """Auth Settings"""
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
@@ -364,6 +366,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
 ]
 
+
 """Messages Settings"""
 MESSAGE_LEVEL = messages.INFO
 MESSAGE_STORAGE = "django.contrib.messages.storage.fallback.FallbackStorage"
@@ -374,6 +377,7 @@ MESSAGE_TAGS = {
     messages.WARNING: "warning",
     messages.ERROR: "error",
 }
+
 
 """Sessions Settings"""
 SESSION_CACHE_ALIAS = "default"
@@ -390,8 +394,10 @@ SESSION_FILE_PATH = None
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.JSONSerializer"
 
+
 """Sites Settings"""
 SITE_URL = env.str("SITE_URL")
+
 
 """Static Files Settings"""
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -403,6 +409,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
 
 """Third-Party Package Settings"""
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
