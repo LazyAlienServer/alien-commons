@@ -1,6 +1,5 @@
 from django.conf import settings
 
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
@@ -59,7 +58,7 @@ class YoutubeSnapshotView(FormattedResponseMixin, APIView):
             video_count = data["statistics"]["videoCount"]
             view_count = data["statistics"]["viewCount"]
 
-            self.format_success_response(
+            return self.format_success_response(
                 data={
                     "thumbnail_url": thumbnail_url,
                     "subscriber_count": subscriber_count,
