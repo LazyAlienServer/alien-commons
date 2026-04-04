@@ -3,12 +3,12 @@ FROM node:23 AS build-stage
 ENV NODE_OPTIONS="--max-old-space-size=512"
 
 COPY package*.json ./
-RUN npm install
+RUN pnpm install
 
 COPY . .
 
 ARG VITE_MODE=production
-RUN npm run build -- --mode ${VITE_MODE}
+RUN pnpm run build -- --mode ${VITE_MODE}
 
 FROM nginx:1.27.4-alpine AS production-stage
 
