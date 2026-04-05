@@ -1,5 +1,7 @@
-# This settings file is independent and not included in the base->dev/pro/staging structure.
-from datetime import timedelta
+"""
+This settings file is independent and not included in the base->dev/pro/staging structure.
+"""
+
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -33,6 +35,7 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]
 
 DEFAULT_AVATARS = [
     "default_avatar/Axe.webp",
@@ -41,6 +44,10 @@ DEFAULT_AVATARS = [
     "default_avatar/Shovel.webp",
     "default_avatar/Sword.webp",
 ]
+
+SESSION_COOKIE_AGE = 1209600
+SESSION_EXPIRY_REFRESH_INTERVAL = 600
+SESSION_EXPIRY_REFRESH_FIELD = "last_expiry_refresh_at"
 
 VERIFICATION_CODE_RESEND_COOLDOWN = 60
 VERIFICATION_CODE_TTL = 600
@@ -67,7 +74,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "EXCEPTION_HANDLER": "core.views.exception_handler.custom_exception_handler",
     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
@@ -82,13 +89,8 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
-}
-
 MIDDLEWARE = [
-    "core.middlewares.RequestMetaMiddleware",
+    "core.middleware.RequestMetaMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
