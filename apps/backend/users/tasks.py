@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.tasks import task
+from django.core.management import call_command
 
-from logs.logging.logger import get_logger
+from logs.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -20,3 +21,12 @@ def send_verification_email_task(*, to_email, code):
         fail_silently=False,
     )
     logger.info(f"Email sent to {to_email}")
+
+
+@task
+def clean_expired_sessions():
+    """
+    Delete expired sessions.
+    """
+    call_command('clearsessions')
+    logger.info("Expired sessions cleared")
