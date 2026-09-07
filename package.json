@@ -17,9 +17,9 @@
     "prepare": "vp config"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
-    "knip": "^6.32.3",
-    "tsx": "^4.23.12",
+    "@types/node": "^26.4.1",
+    "knip": "^6.34.0",
+    "tsx": "^4.23.13",
     "turbo": "^2.10.12",
     "typescript": "npm:typescript-native-bridge@6.0.3-bridge.7.tsgo.7.0.2",
     "vite-plus": "^0.3.0",
